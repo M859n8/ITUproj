@@ -22,7 +22,7 @@ app.post('/add-item', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.send('Hello from backend!');
+    res.send('Hell from backend!');
 });
 
 // Запуск сервера
