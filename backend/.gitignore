@@ -1,4 +1,4 @@
 node_modules/
-create_user.js
-db_config.js
+create-user.js
+db-config.js
 init-db.js

@@ -1,9 +1,11 @@
 const express = require('express');
+const cors = require('cors');
 const connection = require('./db-config');
 
 const app = express();
 const PORT = 5000;
 
+app.use(cors());
 app.use(express.json()); // Для парсингу JSON
 
 // Маршрут для додавання пункту до списку
@@ -20,7 +22,7 @@ app.post('/add-item', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.send('API працює. Використовуйте маршрути /products для роботи з продуктами.');
+    res.send('Hello from backend!');
 });
 
 // Запуск сервера
