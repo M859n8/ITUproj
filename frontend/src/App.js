@@ -2,6 +2,8 @@
 //import './App.css';
 import React, { useState } from 'react';
 import axios from 'axios';
+import AddProduct from './components/AddProduct';
+
 
 function App() {
   // Стан для зберігання назви нового елемента
@@ -39,6 +41,7 @@ function App() {
             placeholder="Enter item name"
         />
         <button onClick={handleAddItem}>Add Item</button>
+        <AddProduct />
       </div>
   );
 }
