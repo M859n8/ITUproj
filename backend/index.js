@@ -10,16 +10,21 @@ app.use(express.json()); // Для парсингу JSON
 
 // Маршрут для додавання пункту до списку
 app.post('/add-item', (req, res) => {
-    const { name } = req.body;
-    const query = 'INSERT INTO list_items (name) VALUES (?)';
+    const { name, amount, unit, price, lactose_free, gluten_free, vegan, expiration_date } = req.body;
 
-    connection.query(query, [name], (err, results) => {
+    const query = `
+        INSERT INTO products (name, amount, unit, price, lactose_free, gluten_free, vegan, expiration_date) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    connection.query(query, [name, amount, unit, price, lactose_free, gluten_free, vegan, expiration_date], (err, results) => {
         if (err) {
             return res.status(500).send('Error adding item to the database');
         }
         res.status(201).send('Item added successfully');
     });
 });
+
 
 app.get('/', (req, res) => {
     res.send('Hell from backend!');

@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
-
+import axios from 'axios';
 function AddProduct() {
     // Стани для відображення форми та збереження значень полів
     const [showForm, setShowForm] = useState(false);
     const [product, setProduct] = useState({
         name: '',
+        amount: '',
+        unit: '',
         price: '',
-        description: ''
+        lactose_free: false,
+        gluten_free: false,
+        vegan: false,
+        expiration_date: '',
     });
 
     // Показати або приховати форму
@@ -14,19 +19,47 @@ function AddProduct() {
         setShowForm(true);
     };
 
-    // Обробник змін у полях форми
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setProduct({ ...product, [name]: value });
+    // Функція для оновлення полів у формData
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setProduct((prevData) => ({
+            ...prevData,
+            [name]: type === 'checkbox' ? checked : value,
+        }));
     };
 
+
     // Обробник відправки форми
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log('Доданий продукт:', product);
+    const handleAddItem = async () => {
+        // Перевірка обов'язкових полів
+        const { name, amount, unit, price, expiration_date } = product;
+        if (!name || !amount || !unit || !price || !expiration_date) {
+            alert('Please fill in all required fields');
+            return;
+        }
+        try {
+            // Надсилання POST-запиту на бекенд
+            const response = await axios.post('http://localhost:5000/add-item', {
+                ...product,
+                amount: parseInt(product.amount),
+                price: parseFloat(product.price),
+            });
+            alert(response.data); // Показуємо повідомлення про успішне додавання
         // Виконайте будь-які дії з даними продукту (відправка на сервер тощо)
         setShowForm(false); // Закрити форму після додавання продукту
-        setProduct({ name: '', price: '', description: '' }); // Очистити форму
+            setProduct({
+                name: '',
+                amount: '',
+                unit: '',
+                price: '',
+                lactose_free: false,
+                gluten_free: false,
+                vegan: false,
+                expiration_date: '',
+            });
+        } catch (error) {
+            alert('Error adding item: ' + (error.response?.data || error.message));
+        } // Очистити форму
     };
 
     return (
@@ -34,34 +67,73 @@ function AddProduct() {
             <button onClick={handleAddProductClick}>Додати продукт</button>
 
             {showForm && (
-                <form onSubmit={handleSubmit} style={{ marginTop: '10px' }}>
+                <form onSubmit={handleAddItem} style={{ marginTop: '10px' }}>
                     <div>
                         <label>Назва:</label>
                         <input
                             type="text"
                             name="name"
                             value={product.name}
-                            onChange={handleInputChange}
+                            onChange={handleChange}
                             required
                         />
-                    </div>
-                    <div>
-                        <label>Ціна:</label>
+                        <input
+                            type="number"
+                            name="amount"
+                            value={product.amount}
+                            onChange={handleChange}
+                            placeholder="Enter amount"
+                        />
+                        <input
+                            type="text"
+                            name="unit"
+                            value={product.unit}
+                            onChange={handleChange}
+                            placeholder="Enter unit (e.g., kg, liter)"
+                        />
                         <input
                             type="number"
                             name="price"
                             value={product.price}
-                            onChange={handleInputChange}
-                            required
+                            onChange={handleChange}
+                            placeholder="Enter price"
                         />
-                    </div>
-                    <div>
-                        <label>Опис:</label>
-                        <textarea
-                            name="description"
-                            value={product.description}
-                            onChange={handleInputChange}
-                        />
+                        <label>
+                            <input
+                                type="checkbox"
+                                name="lactose_free"
+                                checked={product.lactose_free}
+                                onChange={handleChange}
+                            />
+                            Lactose Free
+                        </label>
+                        <label>
+                            <input
+                                type="checkbox"
+                                name="gluten_free"
+                                checked={product.gluten_free}
+                                onChange={handleChange}
+                            />
+                            Gluten Free
+                        </label>
+                        <label>
+                            <input
+                                type="checkbox"
+                                name="vegan"
+                                checked={product.vegan}
+                                onChange={handleChange}
+                            />
+                            Vegan
+                        </label>
+                        <label>
+                            <input
+                                type="date"
+                                name="expiration_date"
+                                value={product.expiration_date}
+                                onChange={handleChange}
+                                placeholder="Enter expiration date"
+                            />
+                        </label>
                     </div>
                     <button type="submit">Зберегти продукт</button>
                 </form>
