@@ -7,40 +7,40 @@ import AddProduct from './components/AddProduct';
 
 function App() {
   // Стан для зберігання назви нового елемента
-  const [itemName, setItemName] = useState('');
+  const [productName, setProductName] = useState('');
 
   // Обробник зміни значення в полі введення
   const handleInputChange = (event) => {
-    setItemName(event.target.value);
+    setProductName(event.target.value);
   };
 
   // Обробник кнопки "Додати елемент"
-  const handleAddItem = async () => {
-    if (itemName.trim() === '') {
+  const handleSearch = async () => {
+    if (productName.trim() === '') {
       alert('Please enter a name for the item');
       return;
     }
 
     try {
       // Надсилання POST-запиту на бекенд
-      const response = await axios.post('http://localhost:5000/add-item', { name: itemName });
+      const response = await axios.get('http://localhost:5000/get-product', {data: { name: productName } });
       alert(response.data); // Показуємо повідомлення про успішне додавання
-      setItemName(''); // Очищаємо поле введення
+      setProductName(''); // Очищаємо поле введення
     } catch (error) {
-      alert('Error adding item: ' + error.response?.data || error.message);
+      alert('Error searching item: ' + error.response?.data || error.message);
     }
   };
 
   return (
       <div>
-        <h2>Add a New Item</h2>
+        <h2>Search product</h2>
         <input
             type="text"
-            value={itemName}
+            value={productName}
             onChange={handleInputChange}
-            placeholder="Enter item name"
+            placeholder="Enter product name"
         />
-        <button onClick={handleAddItem}>Add Item</button>
+        <button onClick={handleSearch}>Search</button>
         <AddProduct />
       </div>
   );

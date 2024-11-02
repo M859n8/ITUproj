@@ -32,17 +32,19 @@ function AddProduct() {
     // Обробник відправки форми
     const handleAddItem = async () => {
         // Перевірка обов'язкових полів
-        const { name, amount, unit, price, expiration_date } = product;
-        if (!name || !amount || !unit || !price || !expiration_date) {
+        const { name, amount, unit, price } = product;
+
+        if (!name || !amount || !unit || !price) {
             alert('Please fill in all required fields');
             return;
         }
         try {
             // Надсилання POST-запиту на бекенд
-            const response = await axios.post('http://localhost:5000/add-item', {
+            const response = await axios.post('http://localhost:5000/add-product', {
                 ...product,
                 amount: parseInt(product.amount),
                 price: parseFloat(product.price),
+                expiration_date: product.expiration_date || null
             });
             alert(response.data); // Показуємо повідомлення про успішне додавання
         // Виконайте будь-які дії з даними продукту (відправка на сервер тощо)
@@ -135,7 +137,7 @@ function AddProduct() {
                             />
                         </label>
                     </div>
-                    <button type="submit">Зберегти продукт</button>
+                    <button type="submit">Add Product</button>
                 </form>
             )}
         </div>

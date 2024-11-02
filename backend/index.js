@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json()); // Для парсингу JSON
 
 // Маршрут для додавання пункту до списку
-app.post('/add-item', (req, res) => {
+app.post('/add-product', (req, res) => {
     const { name, amount, unit, price, lactose_free, gluten_free, vegan, expiration_date } = req.body;
 
     const query = `
@@ -17,12 +17,43 @@ app.post('/add-item', (req, res) => {
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
-    connection.query(query, [name, amount, unit, price, lactose_free, gluten_free, vegan, expiration_date], (err, results) => {
+    const values = [
+        name,
+        amount,
+        unit,
+        price,
+        lactose_free,
+        gluten_free,
+        vegan,
+        expiration_date || null  // передаємо NULL, якщо expiration_date не задано
+    ];
+
+    connection.query(query, values, (err, results) => {
         if (err) {
             return res.status(500).send('Error adding item to the database');
         }
         res.status(201).send('Item added successfully');
     });
+});
+
+app.get('/get-product', (req, res) => {
+    const { name } = req.query;
+
+    // Перевіряємо, чи переданий параметр
+    if (!name) {
+        return res.status(400).send('Please provide a name to search for');
+    }
+
+    // Запит до бази даних з пошуком за назвою
+    const query = 'SELECT * FROM products WHERE name LIKE ?';
+    connection.query(query, [`%${name}%`], (err, results) => {
+        if (err) {
+            console.error('Error fetching products:', err);
+            return res.status(500).send('Error fetching products from the database');
+        }
+        res.json(results); // Повертаємо всі знайдені об'єкти
+    });
+
 });
 
 
