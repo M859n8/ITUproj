@@ -48,10 +48,12 @@ app.get('/get-product', (req, res) => {
     const query = 'SELECT * FROM products WHERE name LIKE ?';
     connection.query(query, [`%${name}%`], (err, results) => {
         if (err) {
-            console.error('Error fetching products:', err);
-            return res.status(500).send('Error fetching products from the database');
+            return res.status(500).send('Error searching for the item in the database');
         }
-        res.json(results); // Повертаємо всі знайдені об'єкти
+        if (results.length === 0) {
+            return res.status(404).send('Item not found');
+        }
+        res.status(200).json(results);
     });
 
 });
