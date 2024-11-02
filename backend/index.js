@@ -58,6 +58,22 @@ app.get('/get-product', (req, res) => {
 
 });
 
+app.get('/get-all-product', (req, res) => {
+
+    // Запит до бази даних з пошуком за назвою
+    const query = 'SELECT * FROM products ';
+    connection.query(query, (err, results) => {
+        if (err) {
+            return res.status(500).send('Error searching for the item in the database');
+        }
+        if (results.length === 0) {
+            return res.status(404).send('Item not found');
+        }
+        res.status(200).json(results);
+    });
+
+});
+
 
 app.get('/', (req, res) => {
     res.send('Hell from backend!');

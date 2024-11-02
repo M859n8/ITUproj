@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import AddProduct from './components/AddProduct';
 import SearchProduct from './components/SearchProduct';
+import ProductsSection from './components/ProductsSection';
 
 
 function App() {
