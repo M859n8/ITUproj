@@ -66,7 +66,7 @@ function AddProduct() {
 
     return (
         <div>
-            <button onClick={handleAddProductClick}>Додати продукт</button>
+            <button onClick={handleAddProductClick}>+</button>
 
             {showForm && (
                 <form onSubmit={handleAddItem} style={{ marginTop: '10px' }}>

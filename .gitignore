@@ -1,3 +1,5 @@
 node_modules/
 .idea/
 napoveda.txt
+backend/create-user.js
+backend/db-config.js

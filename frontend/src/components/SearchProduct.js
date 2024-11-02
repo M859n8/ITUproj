@@ -17,7 +17,6 @@ function SearchProduct() {
     }
 
     try {
-      // Надсилання POST-запиту на бекенд
       const response = await axios.get('http://localhost:5000/get-product', {
         params: { name: productName }
       });
@@ -30,8 +29,7 @@ function SearchProduct() {
     }
   };
   return (
-    <div>
-      <h2>Search product</h2>
+    <div className="search-box">
       <input
         type="text"
         value={productName}
@@ -41,11 +39,10 @@ function SearchProduct() {
       <button onClick={handleSearch}>Search</button>
       {/* Відображення результатів пошуку */}
       {searchResults && (
-        <div style={{ marginTop: '20px' }}>
-          <h3>Search Results:</h3>
+        <div className="product-list">
           {searchResults.map((product) => (
-            <div key={product.id}>
-              <p><strong>Name:</strong> {product.name}</p>
+            <div key={product.id} className="product-item">
+              <p><strong>Name:</strong> {product.name} className="product-item"</p>
               <p><strong>Amount:</strong> {product.amount} {product.unit}</p>
               <p><strong>Price:</strong> {product.price}</p>
               <p><strong>Lactose Free:</strong> {product.lactose_free ? 'Yes' : 'No'}</p>

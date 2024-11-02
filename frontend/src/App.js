@@ -81,7 +81,9 @@ function App() {
       {/* Вміст календаря */}
     </section>
     <section ref={productsRef} id="products"> {/* Зона "Your products" */}
+      <h2>YOUR PRODUCTS</h2>
       <SearchProduct/>
+      <ProductsSection/>
       <AddProduct />
     </section>
     <section ref={shoppingListRef} id="shoppingList"> {/* Зона "Shopping list" */}

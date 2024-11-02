@@ -19,7 +19,6 @@ const ProductsSection = () => {
 
   return (
     <div>
-      <h2>Product Zone</h2>
       <div className="product-list">
         {products.map(product => (
           <div key={product.id} className="product-item">

@@ -11,11 +11,10 @@
   align-items: center;
   z-index: 1000;
 }
-
-button {
+.navbar button {
   background: none;
   border: none;
-  color: black;
+  color: white;
   font-size: 20px;
   cursor: pointer;
 }
@@ -28,7 +27,7 @@ button {
   margin-left: 100px; /* Відступ для всіх інших кнопок */
 }
 
-button.active {
+.navbar button.active {
   text-decoration: underline;
 }
 
@@ -44,10 +43,69 @@ button.active {
   font-family: 'Grechen Fuemen', sans-serif; /* Застосовуємо шрифт */
   margin-left: 10px; /* Відступ від логотипу */
   font-size: 35px; /* Розмір шрифту */
-  color: black; /* Колір тексту */
+  color: white; /* Колір тексту */
 }
 
 section {
   padding: 100px 100px;
-  margin-top: 60px; /* Відступ, щоб не перекривалося меню */
+  margin-top: min(10vh, 60px);
+  margin-bottom: min(10vh, 60px);
+  margin-inline: 10vh;
+
+
+}
+section#calendar {
+  /*margin-top: 25%;*/
+  margin-top: min(25vh, 120px);
+}
+
+
+/* M A R Y N A*/
+#products{
+  padding: 10vh;
+  background-color: white;
+  border-radius: 36px;
+}
+#products h2 {
+  text-align: center;
+  margin-top: 0;
+}
+
+/*.product-item{*/
+/*  margin-bottom: 1vh;*/
+/*  background-color: white;*/
+/*}*/
+section#products {
+  height: 90vh;                /* Висота секції 90% від висоти вікна */
+  overflow-y: auto;            /* Додає вертикальну прокрутку */
+  padding: 10px;               /* Внутрішній відступ */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Легка тінь для секції */
+}
+.search-box{
+  margin: 3vh auto;
+  width: 80%;
+  display: flex;
+}
+.search-box input[type="text"]  {
+  width: 100%;             /* Ширина текстового поля на 100% від контейнера */
+  border: 1px solid #ccc;  /* Кордон для текстового поля */
+  border-radius: 5px;      /* Закруглення кутів (опціонально) */
+}
+
+.product-list {
+  background-color: white;
+  display: flex;               /* Включає flexbox */
+  flex-wrap: wrap;            /* Дозволяє переносити елементи на новий рядок */
+  justify-content: center;     /* Вирівнює елементи по центру */
+  gap: 20px;                  /* Відступ між елементами */
+}
+
+.product-item {
+  flex: 0 1 calc(50% - 20px); /* Ширина 50%, з урахуванням відступів */
+  box-sizing: border-box;      /* Дозволяє padding і border не впливати на ширину */
+  height: 200px;               /* Висота елемента (за потреби) */
+  background-color: #f0f0f0;  /* Колір фону для прикладу */
+  display: flex;               /* Для вирівнювання контенту */
+  justify-content: center;      /* Вирівнює контент по центру */
+  align-items: center;          /* Вирівнює по вертикалі */
 }
