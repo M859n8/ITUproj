@@ -1,11 +1,10 @@
 const mysql = require('mysql2');
 
 const connection = mysql.createConnection({
-    host: '172.18.192.1',      // Хост MySQL
-    port: 3307,
-    user: 'userAdmin',           // Користувач MySQL
-    password: 'password',   // Пароль MySQL
-    database: 'ratatouille',   // База даних
+    host: '192.168.56.1',      // Хост MySQL
+    user: 'app',           // Користувач MySQL
+    password: 'mealApp',   // Пароль MySQL
+    database: 'AppName',   // База даних
     multipleStatements: true
 });
 
