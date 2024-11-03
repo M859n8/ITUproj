@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useProducts } from './ProductContext';
 function AddProduct() {
     // Стани для відображення форми та збереження значень полів
     const [showForm, setShowForm] = useState(false);
@@ -59,6 +60,8 @@ function AddProduct() {
                 vegan: false,
                 expiration_date: '',
             });
+            // Оновлення списку продуктів
+            fetchProducts();
         } catch (error) {
             alert('Error adding item: ' + (error.response?.data || error.message));
         } // Очистити форму

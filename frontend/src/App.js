@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef  } from 'react';
 import appIcon from './images/app_icon.JPG'; // Імпорт зображення
 import AddProduct from './components/AddProduct';
 import SearchProduct from './components/SearchProduct';
-import ProductsSection from './components/ProductsSection';
+import ProductsContext from './components/ProductContext';
 
 
 function App() {
@@ -83,7 +83,11 @@ function App() {
     <section ref={productsRef} id="products"> {/* Зона "Your products" */}
       <h2>YOUR PRODUCTS</h2>
       <SearchProduct/>
-      <ProductsSection/>
+      {/*<ProductsContext/>*/}
+      <ProductsProvider>
+        <ProductList />
+        {/* Інші компоненти, які можуть використовувати продукти */}
+      </ProductsProvider>
       <AddProduct />
     </section>
     <section ref={shoppingListRef} id="shoppingList"> {/* Зона "Shopping list" */}
