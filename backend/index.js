@@ -76,7 +76,7 @@ app.get('/get-all-product', (req, res) => {
 
 
 app.get('/', (req, res) => {
-    res.send('Hell from backend!');
+    res.send('Hello from backend!');
 });
 
 // Запуск сервера

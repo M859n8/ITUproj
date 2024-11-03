@@ -5,7 +5,8 @@ import React, { useState, useEffect, useRef  } from 'react';
 import appIcon from './images/app_icon.JPG'; // Імпорт зображення
 import AddProduct from './components/AddProduct';
 import SearchProduct from './components/SearchProduct';
-import ProductsContext from './components/ProductContext';
+import { ProductProvider } from './components/ProductContext';
+import ProductList from './components/ProductList';
 
 
 function App() {
@@ -81,14 +82,19 @@ function App() {
       {/* Вміст календаря */}
     </section>
     <section ref={productsRef} id="products"> {/* Зона "Your products" */}
-      <h2>YOUR PRODUCTS</h2>
+
+        <ProductProvider>
+          <AddProduct />
+        </ProductProvider>
+
+
+
       <SearchProduct/>
-      {/*<ProductsContext/>*/}
-      <ProductsProvider>
+
+      <ProductProvider>
         <ProductList />
-        {/* Інші компоненти, які можуть використовувати продукти */}
-      </ProductsProvider>
-      <AddProduct />
+      </ProductProvider>
+
     </section>
     <section ref={shoppingListRef} id="shoppingList"> {/* Зона "Shopping list" */}
       <h2>Shopping List</h2>

@@ -10,33 +10,39 @@ function SearchProduct() {
     setProductName(event.target.value);
   };
   // Обробник кнопки "Шукати елемент"
-  const handleSearch = async () => {
+  const handleSearch = async (event) => {
     if (productName.trim() === '') {
-      alert('Please enter a name for the item');
+      setSearchResults(null);
       return;
     }
+    if (event.key === 'Enter') {
+      try {
+        const response = await axios.get('http://localhost:5000/get-product', {
+          params: { name: productName }
+        });
+        //alert(response.data); // Показуємо повідомлення про успішне додавання
+        //setProductName(''); // Очищаємо поле введення
+        setSearchResults(response.data); // Зберігаємо результати пошуку
+      } catch (error) {
+        alert('Error searching item: ' + error.response?.data || error.message);
+        setSearchResults(null);
+      }
 
-    try {
-      const response = await axios.get('http://localhost:5000/get-product', {
-        params: { name: productName }
-      });
-      //alert(response.data); // Показуємо повідомлення про успішне додавання
-      setProductName(''); // Очищаємо поле введення
-      setSearchResults(response.data); // Зберігаємо результати пошуку
-    } catch (error) {
-      alert('Error searching item: ' + error.response?.data || error.message);
-      setSearchResults(null);
     }
+
   };
   return (
-    <div className="search-box">
-      <input
-        type="text"
-        value={productName}
-        onChange={handleInputChange}
-        placeholder="Enter product name"
-      />
-      <button onClick={handleSearch}>Search</button>
+    <div>
+      <div className="search-box">
+        <input
+          type="text"
+          value={productName}
+          onChange={handleInputChange}
+          onKeyPress={handleSearch} // Call handleSearch on key press
+          placeholder="Enter product name"
+        />
+      </div>
+      {/*<button onClick={handleSearch}>Search</button>*/}
       {/* Відображення результатів пошуку */}
       {searchResults && (
         <div className="product-list">

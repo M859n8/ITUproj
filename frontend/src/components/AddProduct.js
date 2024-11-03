@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useProducts } from './ProductContext';
 function AddProduct() {
+    const { fetchProducts } = useProducts();
     // Стани для відображення форми та збереження значень полів
     const [showForm, setShowForm] = useState(false);
     const [product, setProduct] = useState({
@@ -31,7 +32,9 @@ function AddProduct() {
 
 
     // Обробник відправки форми
-    const handleAddItem = async () => {
+    const handleAddItem = async (event) => {
+        event.preventDefault(); // Prevents the default form submission
+
         // Перевірка обов'язкових полів
         const { name, amount, unit, price } = product;
 
@@ -41,13 +44,13 @@ function AddProduct() {
         }
         try {
             // Надсилання POST-запиту на бекенд
-            const response = await axios.post('http://localhost:5000/add-product', {
+            await axios.post('http://localhost:5000/add-product', {
                 ...product,
                 amount: parseInt(product.amount),
                 price: parseFloat(product.price),
                 expiration_date: product.expiration_date || null
             });
-            alert(response.data); // Показуємо повідомлення про успішне додавання
+            //alert(response.data); // Показуємо повідомлення про успішне додавання
         // Виконайте будь-які дії з даними продукту (відправка на сервер тощо)
         setShowForm(false); // Закрити форму після додавання продукту
             setProduct({
@@ -69,12 +72,14 @@ function AddProduct() {
 
     return (
         <div>
-            <button onClick={handleAddProductClick}>+</button>
+            <div className="section-header">
+                <h2>YOUR PRODUCTS</h2>
+                <button onClick={handleAddProductClick} className="addButton">+</button>
+            </div>
 
             {showForm && (
-                <form onSubmit={handleAddItem} style={{ marginTop: '10px' }}>
-                    <div>
-                        <label>Назва:</label>
+                <form onSubmit={handleAddItem} >
+                    <div className="show-form">
                         <input
                             type="text"
                             name="name"
