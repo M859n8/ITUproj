@@ -6,9 +6,17 @@ import appIcon from './images/app_icon.JPG'; // Імпорт зображенн�
 import AddProduct from './components/AddProduct';
 import SearchProduct from './components/SearchProduct';
 import ProductsSection from './components/ProductsSection';
-
+import AddDish from './components/AddDish';
 
 function App() {
+  // Create Vlada for dish button
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
+  const toggleForm = () => {
+      setIsFormOpen(!isFormOpen);
+  };
+  // End Vlada code
+
   const [activeSection, setActiveSection] = useState('calendar'); // Стан для активної секції
 
   // Створюємо рефи для кожної секції
@@ -92,6 +100,8 @@ function App() {
     </section>
     <section ref={dishesRef} id="dishes"> {/* Зона "Dishes" */}
       <h2>Dishes</h2>
+      <button onClick={toggleForm}>Add dish</button>
+      {isFormOpen && <AddDish onClose={toggleForm} />}
       {/* Вміст для страв */}
     </section>
   </div>
