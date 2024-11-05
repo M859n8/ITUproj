@@ -73,7 +73,7 @@ section#calendar {
 /*  background-color: white;*/
 /*}*/
 section#products {
-  height: 90vh;                /* Висота секції 90% від висоти вікна */
+  height: 77vh;                /* Висота секції 90% від висоти вікна */
   overflow-y: auto;            /* Додає вертикальну прокрутку */
   padding: 10px;               /* Внутрішній відступ */
   box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Легка тінь для секції */
@@ -130,6 +130,21 @@ section#products {
   height: 200px;               /* Висота елемента (за потреби) */
   background-color: #f0f0f0;  /* Колір фону для прикладу */
   display: flex;               /* Для вирівнювання контенту */
-  justify-content: center;      /* Вирівнює контент по центру */
+  justify-content: space-between;      /* Вирівнює контент по центру */
   align-items: center;          /* Вирівнює по вертикалі */
+}
+.product-item h3 {
+  flex: 1; /* Назва зліва */
+  margin-left: 20px;
+  font-size: 1.2em;
+}
+.product-details {
+  flex: 1; /* Характеристики справа */
+  display: flex;
+  flex-direction: column; /* Розташовує характеристики в стовпчик */
+  align-items: flex-start;
+}
+.product-details p {
+  margin: 0; /* Зменшує відстань між характеристиками */
+  /*padding: 0; /* Видаляє зайвий відступ, якщо він був */
 }

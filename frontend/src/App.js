@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef  } from 'react';
 // import axios from 'axios';
 import appIcon from './images/app_icon.JPG'; // Імпорт зображення
 import AddProduct from './components/AddProduct';
-import SearchProduct from './components/SearchProduct';
 import { ProductProvider } from './components/ProductContext';
 import ProductList from './components/ProductList';
 //import ProductsSection from './components/ProductsSection';
@@ -92,13 +91,13 @@ function App() {
     </section>
     <section ref={productsRef} id="products"> {/* Зона "Your products" */}
 
-        <ProductProvider>
-          <AddProduct />
-        </ProductProvider>
+      <ProductProvider>
+        <AddProduct />
+      </ProductProvider>
 
 
 
-      <SearchProduct/>
+      {/*<SearchProduct/>*/}
 
       <ProductProvider>
         <ProductList />
