@@ -110,6 +110,57 @@ app.post('/add-dish', (req, res) => {
     });
 });
 
+app.get('/get-dish', (req, res) => {
+    const { name } = req.query;
+
+    // Запит для пошуку страви за назвою
+    const dishQuery = 'SELECT * FROM dishes WHERE name LIKE ?';
+    connection.query(dishQuery, [`%${name}%`], (err, dishResults) => {
+        if (err) {
+            return res.status(500).send('Error searching for the dish');
+        }
+
+        if (dishResults.length === 0) {
+            return res.status(404).send('No dishes found');
+        }
+
+        // Отримання інгредієнтів для знайдених страв
+        const dishIds = dishResults.map(dish => dish.id);
+        const ingredientQuery = `
+            SELECT dp.dish_id, p.name AS product_name, dp.required_amount, p.unit
+            FROM dish_product dp
+            JOIN products p ON dp.product_id = p.id
+            WHERE dp.dish_id IN (?)
+        `;
+
+        connection.query(ingredientQuery, [dishIds], (err, ingredientResults) => {
+            if (err) {
+                return res.status(500).send('Error retrieving ingredients');
+            }
+
+            // Додавання інгредієнтів до відповідних страв
+            const dishesWithIngredients = dishResults.map(dish => {
+                return {
+                    ...dish,
+                    ingredients: ingredientResults.filter(ingredient => ingredient.dish_id === dish.id)
+                };
+            });
+
+            res.status(200).json(dishesWithIngredients);
+        });
+    });
+});
+
+app.get('/get-all-dishes', (req, res) => {
+    const query = 'SELECT * FROM dishes'; // Отримуємо всі страви
+    connection.query(query, (err, results) => {
+        if (err) {
+            return res.status(500).send('Error retrieving dishes');
+        }
+        res.json(results); // Відправляємо список страв у форматі JSON
+    });
+});
+
 app.get('/', (req, res) => {
     res.send('Hello from backend!');
 });

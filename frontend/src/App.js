@@ -1,22 +1,40 @@
 //import logo from './logo.svg';
 import './App.css';
 import React, { useState, useEffect, useRef  } from 'react';
-// import axios from 'axios';
+import axios from 'axios';
 import appIcon from './images/app_icon.JPG'; // Імпорт зображення
 import AddProduct from './components/AddProduct';
 import { ProductProvider } from './components/ProductContext';
 import ProductList from './components/ProductList';
 //import ProductsSection from './components/ProductsSection';
 import AddDish from './components/AddDish';
+import SearchDish from './components/SearchDish';
+import './components/SearchDish.css';
 
 function App() {
-  // Create Vlada for dish button
+  // -----------Create Vlada for dish button
+  const [dishes, setDishes] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const toggleForm = () => {
       setIsFormOpen(!isFormOpen);
   };
-  // End Vlada code
+
+   // Функція для отримання всіх страв
+   const fetchDishes = async () => {
+      try {
+          const response = await axios.get('/get-all-dishes');
+          setDishes(response.data);
+          // console.log('Dishes:', response.data);
+      } catch (error) {
+          console.error('Error fetching dishes:', error);
+      }
+  };
+
+  useEffect(() => {
+      fetchDishes(); // Отримуємо страви при завантаженні компонента
+  }, []);
+  // ------------------End Vlada code
 
   const [activeSection, setActiveSection] = useState('calendar'); // Стан для активної секції
 
@@ -111,8 +129,27 @@ function App() {
     <section ref={dishesRef} id="dishes"> {/* Зона "Dishes" */}
       <h2>Dishes</h2>
       <button onClick={toggleForm}>Add dish</button>
-      {isFormOpen && <AddDish onClose={toggleForm} />}
+      {isFormOpen && <AddDish onClose={toggleForm} fetchDishes={fetchDishes}/>}
+      <SearchDish/>
       {/* Вміст для страв */}
+      <div className="dish-results">
+            {dishes.map((dish) => (
+                <div key={dish.id} className="dish-card">
+                    <h3>{dish.name}</h3>
+                    <p>Difficulty: {dish.difficulty_level}</p>
+                    <p>Cooking time: {dish.cooking_time}</p>
+                    {dish.is_lactose_free && <p>Lactose-free</p>}
+                    {dish.is_gluten_free && <p>Gluten-free</p>}
+                    {dish.is_vegan && <p>Vegan</p>}
+                    <p>Ingredients:</p>
+                    {/* <ul>
+                        {dish.ingredients.map((ingredient, i) => (
+                            <li key={i}>{ingredient.product_name} ({ingredient.required_amount} {ingredient.unit})</li>
+                        ))}
+                    </ul> */}
+                </div>
+            ))}
+        </div>
     </section>
   </div>
   );

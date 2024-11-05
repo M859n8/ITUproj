@@ -59,7 +59,15 @@ section#calendar {
   margin-top: min(25vh, 120px);
 }
 
-
+#dishes { 
+  padding: 40px; 
+  height: 80vh;
+  background-color: #ffffffc8; /* Колір фону секції */ 
+  overflow-y: auto;/*Прокручування вмісту, якщо він перевищує висоту секції */
+}
+#dishes h2{
+  margin-top: 0px;
+}
 /* M A R Y N A*/
 #products{
   padding: 10vh;
