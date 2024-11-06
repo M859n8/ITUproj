@@ -18,7 +18,14 @@ function AddProduct() {
 
   // Показати або приховати форму
   const handleAddProductClick = () => {
-    setShowForm(true);
+    if(showForm){
+      setShowForm(false);
+
+    }else{
+      setShowForm(true);
+
+    }
+
   };
 
   // Функція для оновлення полів у формData
@@ -71,7 +78,8 @@ function AddProduct() {
   };
 
   return (
-    <div>
+  // for corrrect position of add form
+    <div class="parent">
       <div className="section-header">
         <h2>YOUR PRODUCTS</h2>
         <button onClick={handleAddProductClick} className="addButton">+</button>
@@ -79,13 +87,14 @@ function AddProduct() {
 
       {showForm && (
         <form onSubmit={handleAddItem} >
+
           <div className="show-form">
             <input
               type="text"
               name="name"
               value={product.name}
               onChange={handleChange}
-              required
+              placeholder="Enter name"
             />
             <input
               type="number"
@@ -94,13 +103,17 @@ function AddProduct() {
               onChange={handleChange}
               placeholder="Enter amount"
             />
-            <input
-              type="text"
+            <select
               name="unit"
               value={product.unit}
               onChange={handleChange}
-              placeholder="Enter unit (e.g., kg, liter)"
-            />
+            >
+              <option value="">Select unit</option>
+              <option value="kg">kg</option>
+              <option value="liter">liter</option>
+              <option value="piece">piece</option>
+              <option value="-">-</option>
+            </select>
             <input
               type="number"
               name="price"
@@ -144,11 +157,12 @@ function AddProduct() {
                 placeholder="Enter expiration date"
               />
             </label>
+            <button type="submit">Add Product</button>
           </div>
-          <button type="submit">Add Product</button>
         </form>
       )}
     </div>
+
   );
 }
 

@@ -68,6 +68,9 @@ section#calendar {
 #dishes h2{
   margin-top: 0px;
 }
+
+
+
 /* M A R Y N A*/
 #products{
   padding: 10vh;
@@ -96,22 +99,35 @@ section#products {
   text-align: center;
   margin: 0 10px 0 0; /* Remove margin on top/bottom and add margin-right for space */
 }
+.parent {
+  position: relative;
+}
 .addButton {
   background-color: white;
   font-size: 20px;
   border-color: white;
+  cursor: pointer; /* Курсор у вигляді руки для кнопки */
 }
 .show-form {
-  position: fixed; /* Position it fixed to overlay other content */
+  position: absolute;
+  top: 60px; /* Відступ від кнопки додавання */
   bottom: 20px; /* Position from the bottom */
   left: 50%;
   transform: translateX(-50%); /* Center it horizontally */
-  background-color: white; /* Background color */
+  background-color: #c6dbe6; /* Background color */
   border: 1px solid #ccc; /* Border styling */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Shadow for depth */
   padding: 20px; /* Spacing inside the modal */
   z-index: 1000; /* Ensure it appears above other content */
-  width: 300px; /* Set a fixed width */
+  width: 50vh; /* Set a fixed width */
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /*gap between elements*/
+
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease, visibility 0.3s ease; /* Плавний перехід */
 }
 .search-box{
   margin: 3vh auto;
