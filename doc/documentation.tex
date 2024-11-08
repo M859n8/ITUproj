@@ -25,10 +25,10 @@
 \section*{Uživatelský průzkum a specifikace}
 
 \subsection*{Popis aplikace}
-    Moderní rytmus života nás nutí neustále hledat způsoby, jak efektivně hospodařit s časem a zdroji. Bez jasného plánu je obtížné kontrolovat výdaje: nakupujeme příliš mnoho, zapomínáme, co už máme, a utrácíme peníze za produkty, které se mohou zkazit, než je stihneme použít. Vytvořili jsme aplikaci, která pomáhá tyto problémy řešit. Usnadňuje uspořádání všech produktů, které již doma máte, plánování jídel na konkrétní dny, vytváření podrobných nákupních seznamů, sledování, kolik peněz utratíte za jídlo, a dokonce i kontrolu data expirace produktů. Tento přístup umožňuje nejen ušetřit čas a peníze, ale také diverzifikovat vaši menu.
+    Moderní rytmus života nás nutí neustále hledat způsoby, jak efektivně hospodařit s časem a zdroji. Bez jasného plánu je obtížné kontrolovat výdaje: nakupujeme příliš mnoho, zapomínáme, co už máme, a utrácíme peníze za produkty, které se mohou zkazit, než je stihneme použít. Rozhodli jsme se vytvořit aplikaci, která pomáhá tyto problémy řešit. Usnadňuje uspořádání všech produktů, které již doma máte, plánování jídel na konkrétní dny, vytváření podrobných nákupních seznamů, sledování, kolik peněz utratíte za jídlo, a dokonce i kontrolu data expirace produktů. Tento přístup umožňuje nejen ušetřit čas a peníze, ale také diverzifikovat vaši menu.
 
 \subsection*{Cílová skupina, pro kterou je program určen}
-    Lidé, kteří si rádi organizují svůj život, věk: 16+.
+    Lidé, kteří si rádi organizují svůj život, věk: starší 16 let.
     
 
 
@@ -36,7 +36,10 @@
 \begin{itemize}
     \item Závěr z rozhovoru s uživatelem od Kucher Maryny
     \begin{itemize}
-        \item Závěr
+        \item Dotazovaný je osmnáctiletý člověk, který začal žít sám a rád využívá aplikace pro organizaci každodenních úkolů
+        \item Uživatel potřebuje pohodlnou a srozumitelnou aplikaci, která mu pomůže organizovat zásoby jídla, plánovat jídelníček na několik dní dopředu a ušetřit čas při rozhodování, co vařit každý den.
+        Uživatel by rád měl možnost automaticky sestavit menu na základě dostupných produktů a receptů, které si sám vybral. Chce mít možnost snadno přidávat nové položky, sledovat, co je skladem, a kontrolovat datum spotřeby produktů.
+        Důležitou funkcí by měla být také možnost rychlého vytvoření nákupního seznamu podle plánovaných jídel nebo chybějících produktů. Uživatel by uvítal, kdyby aplikace dokázala zobrazit přibližné náklady na nákup a, ideálně, umožnila sledovat výdaje za určité období.
     \end{itemize}
     \item Závěr z rozhovoru s uživatelem od Bilyk Vladyslavy
     \begin{itemize}
@@ -62,7 +65,7 @@
     \item \textbf{Mealime} : aplikace nabízí velkou databázi receptů s podrobným popisem vaření, možnost vytvoření nákupního seznamu.
     \begin{itemize}
         \item Výhoda :  Automatické vytváření nákupního seznamu. Možnost vařit s obrazem kroků receptu v reálném čase. Schopnost vytvářet si vlastní recepty nebo používat ty navržené.
-        \item Nevyhoda : aplikace neposkytuje možnost ovládat seznam produktů, které jsou doma.Naplánované recepty nejsou propojeny s kalendářem.
+        \item Nevyhoda : aplikace neposkytuje možnost ovládat seznam produktů, které jsou doma. Naplánované recepty nejsou propojeny s kalendářem.
     \end{itemize}
     \includegraphics[width=0.9\textwidth]{mealime.png}
     
@@ -107,8 +110,17 @@
 
 \section*{Návrh}
 \subsection*{Návrh GUI}
-
+Pro frontend jsme zvolili React, protože je to jeden z nejoblíbenějších frameworků pro vývoj dynamických a interaktivních uživatelských rozhraní. 
+React také poskytuje pohodlnou architekturu komponent, která usnadňuje vytváření, opětovné použití a údržbu jednotlivých prvků rozhraní. Rozdělili jsme naši aplikaci na nezávislé komponenty : Kalendář, ProductList, ShoppingList a DishesList.
+\begin{center}
+\includegraphics[width=0.7\textwidth]{figma_calendar.png}
+\end{center}
+ProductList – Tato komponenta zobrazuje seznam dostupných produktů a jejich krátký popis, které jsou připojeny k backendu a jsou přijímány prostřednictvím API požadavku. Díky Reactu lze seznam rychle aktualizovat bez nutnosti obnovovat celou stránku. Zobrazí se počet produktů, které se vejdou na obrazovku, je možné rolováním zobrazit další položky. Každý produkt lze snadno upravit nebo smazat.
+\begin{center}
+\includegraphics[width=0.7\textwidth]{figma_product.png}
+\end{center}
 \includegraphics[width=0.9\textwidth]{dishes.JPG}
+
 \begin{itemize}
     \item Popis  logické implikace navrženého GUI
 \end{itemize}
