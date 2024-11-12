@@ -18,28 +18,23 @@ const AddDish = ({ onClose, fetchDishes  }) => {
             const response = await axios.get(`/get-product?name=${searchProduct}`);
             setFoundProducts(response.data);
         } catch (error) {
-            console.error('Error searching for products:', error); // delete
+            console.error('Error searching for products:', error); 
         }
     };
 
-    // const handleAddIngredient = (productId, requiredAmount) => {
-    //     setIngredients([...ingredients, { productId, requiredAmount }]);
-    //     setFoundProducts([]); // Очищаємо список знайдених продуктів
-    //     setSearchProduct(''); // Очищаємо поле пошуку
-    // };
     const handleAddIngredient = (productId, requiredAmount) => {
-        // Знаходимо продукт за його ID, щоб отримати назву та одиницю виміру
+        // Find the product
         const product = foundProducts.find(prod => prod.id === productId);
     
         if (product) {
             setIngredients([...ingredients, { 
                 productId, 
-                productName: product.name, // Додаємо назву продукту
-                unit: product.unit, // Додаємо одиницю виміру
+                productName: product.name, 
+                unit: product.unit, 
                 requiredAmount 
             }]);
-            setFoundProducts([]); // Очищаємо список знайдених продуктів
-            setSearchProduct(''); // Очищаємо поле пошуку
+            setFoundProducts([]); // Clean found products
+            setSearchProduct(''); // Clear searching field
         }
     };
 
@@ -55,10 +50,9 @@ const AddDish = ({ onClose, fetchDishes  }) => {
                 is_lactose_free: isLactoseFree,
                 ingredients,
             });
-            console.log('Dish created:', response.data); // delete
-            onClose(); // Закриваємо форму
+            onClose(); // Close the form
 
-            fetchDishes(); // Вимагайте, щоб батьківський компонент отримував новий список
+            fetchDishes(); // Refresh the list of dishes
         } catch (error) {
             console.error('Error creating dish:', error);
         }
@@ -119,26 +113,6 @@ const AddDish = ({ onClose, fetchDishes  }) => {
                         </label>
                     </div>
                     
-                    {/* <input 
-                        type="text" 
-                        placeholder="Search product" 
-                        value={searchProduct} 
-                        onChange={(e) => setSearchProduct(e.target.value)} 
-                    />
-                    <button type="button" onClick={handleSearch}>Search</button>
-
-                    {foundProducts.map(product => (
-                        <div key={product.id}>
-                            <span>{product.name}</span>
-                            <input 
-                                type="number" 
-                                min="1" 
-                                placeholder="Amount" 
-                                onChange={(e) => handleAddIngredient(product.id, e.target.value)} 
-                            />
-                        </div>
-                    ))} */}
-                    {/* Поле для пошуку продуктів */}
                     <div>
                         <h3>Ingredients</h3>
                         <input 
@@ -150,7 +124,6 @@ const AddDish = ({ onClose, fetchDishes  }) => {
                         <button type="button" onClick={handleSearch}>Search</button>
                     </div>
 
-                    {/* Відображення знайдених продуктів */}
                     {foundProducts.map(product => (
                         <div key={product.id}>
                             <span>{product.name}</span>
@@ -174,7 +147,7 @@ const AddDish = ({ onClose, fetchDishes  }) => {
                         </div>
                     ))}
 
-                    {/* Відображення доданих інгредієнтів */}
+                    {/* Show added products*/}
                     <ul>
                         {ingredients.map((ingredient, index) => (
                             <li key={index}>

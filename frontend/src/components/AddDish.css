@@ -1,13 +1,3 @@
-/* AddDish.css */
-/* .form-container {
-    display: flex;
-    flex-direction: column;
-    width: 100%; 
-    padding: 20px;
-    border: 1px solid #ddd;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-} */
 
 .form-container h2 {
     margin-bottom: 10px;
@@ -28,12 +18,12 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5); /* Напівпрозорий чорний фон */
-    backdrop-filter: blur(5px); /* Ефект розмиття заднього фону */
+    background-color: rgba(0, 0, 0, 0.5); 
+    backdrop-filter: blur(5px); 
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Високий індекс, щоб перекрити інші елементи */
+    z-index: 1000; /* A high index to overlay other elements. */
 }
 
 .form-container {

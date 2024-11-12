@@ -6,7 +6,7 @@ const app = express();
 const PORT = 5000;
 
 app.use(cors());
-app.use(express.json()); // Для парсингу JSON
+app.use(express.json()); 
 
 //----------------------------------------------------- Maryna------------------------------------------------------------------
 // Маршрут для додавання пункту до списку
@@ -78,7 +78,7 @@ app.get('/get-all-product', (req, res) => {
 app.post('/add-dish', (req, res) => {
     const { name, difficulty_level, cooking_time, is_vegan, is_gluten_free, is_lactose_free, ingredients } = req.body;
 
-    // Створюємо страву
+    // Create dish
     const query = 'INSERT INTO dishes (name, difficulty_level, cooking_time, is_vegan, is_gluten_free, is_lactose_free) VALUES (?, ?, ?, ?, ?, ?)';
     connection.query(query, [name, difficulty_level, cooking_time, is_vegan, is_gluten_free, is_lactose_free], (err, results) => {
         if (err) {
@@ -87,7 +87,7 @@ app.post('/add-dish', (req, res) => {
 
         const dishId = results.insertId;
 
-        // Додаємо зв'язки в таблицю dish_product
+        // Add connection to the table dish_product
         const dishProductQueries = ingredients.map(ingredient => {
             return new Promise((resolve, reject) => {
                 const insertQuery = 'INSERT INTO dish_product (dish_id, product_id, required_amount) VALUES (?, ?, ?)';
@@ -113,7 +113,7 @@ app.post('/add-dish', (req, res) => {
 app.get('/get-dish', (req, res) => {
     const { name } = req.query;
 
-    // Запит для пошуку страви за назвою
+    // Search dish
     const dishQuery = 'SELECT * FROM dishes WHERE name LIKE ?';
     connection.query(dishQuery, [`%${name}%`], (err, dishResults) => {
         if (err) {
@@ -124,7 +124,7 @@ app.get('/get-dish', (req, res) => {
             return res.status(404).send('No dishes found');
         }
 
-        // Отримання інгредієнтів для знайдених страв
+        // Get the product of the dish
         const dishIds = dishResults.map(dish => dish.id);
         const ingredientQuery = `
             SELECT dp.dish_id, p.name AS product_name, dp.required_amount, p.unit
@@ -138,7 +138,7 @@ app.get('/get-dish', (req, res) => {
                 return res.status(500).send('Error retrieving ingredients');
             }
 
-            // Додавання інгредієнтів до відповідних страв
+            // Creating map of dish with their product
             const dishesWithIngredients = dishResults.map(dish => {
                 return {
                     ...dish,
@@ -152,20 +152,70 @@ app.get('/get-dish', (req, res) => {
 });
 
 app.get('/get-all-dishes', (req, res) => {
-    const query = 'SELECT * FROM dishes'; // Отримуємо всі страви
-    connection.query(query, (err, results) => {
+    const dishQuery = 'SELECT * FROM dishes'; // Get all dish
+
+    connection.query(dishQuery, (err, dishResults) => {
         if (err) {
             return res.status(500).send('Error retrieving dishes');
         }
-        res.json(results); // Відправляємо список страв у форматі JSON
+
+        if (dishResults.length === 0) {
+            return res.status(404).send('No dishes found');
+        }
+
+        // Get id of dish
+        const dishIds = dishResults.map(dish => dish.id);
+        
+        // Get all product for the dishes
+        const ingredientQuery = `
+            SELECT dp.dish_id, p.name AS product_name, dp.required_amount, p.unit
+            FROM dish_product dp
+            JOIN products p ON dp.product_id = p.id
+            WHERE dp.dish_id IN (?)
+        `;
+
+        connection.query(ingredientQuery, [dishIds], (err, ingredientResults) => {
+            if (err) {
+                return res.status(500).send('Error retrieving ingredients');
+            }
+
+            // Creating map of dish with their product
+            const dishesWithIngredients = dishResults.map(dish => {
+                return {
+                    ...dish,
+                    ingredients: ingredientResults.filter(ingredient => ingredient.dish_id === dish.id)
+                };
+            });
+
+            res.status(200).json(dishesWithIngredients); 
+        });
     });
 });
 
-app.get('/', (req, res) => {
-    res.send('Hello from backend!');
+app.delete('/delete-dish/:id', (req, res) => {
+    const { id } = req.params;
+
+    // Delete connection in table dish_product
+    const deleteDishProductQuery = 'DELETE FROM dish_product WHERE dish_id = ?';
+    connection.query(deleteDishProductQuery, [id], (err) => {
+        if (err) {
+            return res.status(500).send('Error deleting dish ingredients');
+        }
+
+        // Delete dish
+        const deleteDishQuery = 'DELETE FROM dishes WHERE id = ?';
+        connection.query(deleteDishQuery, [id], (err) => {
+            if (err) {
+                return res.status(500).send('Error deleting the dish');
+            }
+
+            res.status(200).send('Dish deleted successfully');
+        });
+    });
 });
 
-// Запуск сервера
+
+// Starting server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });

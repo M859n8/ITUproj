@@ -48,14 +48,8 @@
     \end{itemize}
     \item Závěr týmu
     \begin{itemize}
-        \item Závěr
+        \item Užvatelé chtějí aplikaci, která co nejvíce automatizuje plánování jídel a nákupní seznamy. uživatelé také projevili zájem o možnost sledovat další údaje o produktech, jako jsou data expirace nebo zvláštní pozornost při nákupu základních produktů.
     \end{itemize}
-    \item Statistika odpovědí:
-    % \begin{figure}[h!]
-    %     \centering
-    %     \includegraphics[width=0.5\textwidth]{cesta_do_фото}
-    %     \caption{Popis obrázku}
-    % \end{figure} % фото статисктики квізу
 \end{itemize}
 
 \section*{Průzkum existujících řešení}
@@ -72,7 +66,7 @@
 
     \item \textbf{Meal planner grocery list} : Aplikace má kalendář s plánem menu, nákupním seznamem a seznamem s potravinami doma.
     \begin{itemize}
-        \item Výhoda : Schopnost vytvářet pravidla jako „Pondělí je kuřecí den“. Schopnost přidat zdrojové odkazy na vlastní recepty.
+        \item Výhoda : Schopnost vytvářet pravidla jako „Pondělí je kuřecí den“.Schopnost vytvářet vlastní recepty a přidat zdrojové odkazy.
         \item Nevyhoda : Nedostatek automatizace při vytváření nákupního seznamu (po naplánování jídla je nutné přidat produkt do nákupního seznamu). Chybí možnost plánování jídla mimo domov.  Aplikace neposkytuje možnost sledovat datum expirace produktů
     \end{itemize}
     \begin{center}
@@ -99,41 +93,86 @@
 
 \subsection*{Závěry průzkumu}
 \begin{itemize}
-    \item Vyvození 3 inspirací/ponaučení pro návrh aplikace.
+    \item Hlavním problémem studovaných aplikací je, že neumožňují kompletní plánování jídla. Některé aplikace pomáhají plánovat jídla podle data, ale nevytvářejí nákupní seznam, některé naopak. Chceme uživateli pomoci zautomatizovat celý proces plánování jídla: od nápadu na jídlo až po kalkulaci výdajů za měsíc. Líbil se nám nápad vytvořit si vlastní recepty. Také jsme se rozhodli rozdělit den na uživatelsky zvolený počet jídel pro usnadnění vizuálního plánování.
 \end{itemize}
 
-\subsection*{Popis požadované aplikace}
-\begin{itemize}
-    \item Popis aplikace: Klíčové funkce a části frontendu.
-    \item Přehled aplikace a její funkčnosti.
-\end{itemize}
 
 \section*{Návrh}
 \subsection*{Návrh GUI}
-Pro frontend jsme zvolili React, protože je to jeden z nejoblíbenějších frameworků pro vývoj dynamických a interaktivních uživatelských rozhraní. 
-React také poskytuje pohodlnou architekturu komponent, která usnadňuje vytváření, opětovné použití a údržbu jednotlivých prvků rozhraní. Rozdělili jsme naši aplikaci na nezávislé komponenty : Kalendář, ProductList, ShoppingList a DishesList.
+ Rozdělili jsme naši aplikaci na nezávislé komponenty : Kalendář, ProductList, ShoppingList a DishesList. Horní menu pomáhá uživateli s navigací mezi sekcemi na webu.
+
+ Calendar - tato komponenta představuje hlavní účel aplikace: jídelní plán.  Zobrazí se kalendář na měsíc, je možné si vybrat konkrétní den a naplánovat jídlo.
 \begin{center}
+
 \includegraphics[width=0.7\textwidth]{figma_calendar.png}
 \end{center}
 ProductList – Tato komponenta zobrazuje seznam dostupných produktů a jejich krátký popis, které jsou připojeny k backendu a jsou přijímány prostřednictvím API požadavku. Díky Reactu lze seznam rychle aktualizovat bez nutnosti obnovovat celou stránku. Zobrazí se počet produktů, které se vejdou na obrazovku, je možné rolováním zobrazit další položky. Každý produkt lze snadno upravit nebo smazat.
 \begin{center}
 \includegraphics[width=0.7\textwidth]{figma_product.png}
 \end{center}
+\begin{center}
 \includegraphics[width=0.9\textwidth]{dishes.JPG}
-
+\end{center}
 \begin{itemize}
-    \item Popis  logické implikace navrženého GUI
+    \item \textbf{Sekce Dish}: V této sekci se zobrazují jídla, která uživatel již vytvořil. Kromě možnosti vytvořit nové jídlo nebo vyhledat již existující, lze jídlo přidat do kalendáře na konkrétní datum. K dispozici jsou také základní funkce - úprava a smazání, které se zobrazují v pravém horním rohu každého jídla.
 \end{itemize}
-
-
+\begin{center}
+\includegraphics[width=0.9\textwidth]{shopping_list.JPG}
+\end{center}
+\begin{itemize}
+    \item \textbf{Sekce Shopping List}: Produkty, které je třeba koupit, se zobrazují ve formě seznamu. Pokud je seznam příliš dlouhý, je k dispozici vyhledávací řádek pro snadnější navigaci. Pro přidání produktu se používá tlačítko v pravém horním rohu, pro odstranění se označí zaškrtávací políčko.
+\end{itemize}
 \subsection*{Výběr technologií}
 \begin{itemize}
-    \item Popis technologii a zduvodneni
+    \item Pro frontend jsme zvolili React, protože je to jeden z nejoblíbenějších frameworků pro vývoj dynamických a interaktivních uživatelských rozhraní. 
+React také poskytuje pohodlnou architekturu komponent, která usnadňuje vytváření, opětovné použití a údržbu jednotlivých prvků rozhraní. Pro backend jsme zvolili Node.js ve spojení s frameworkem Express. Tato volba je odůvodněna snadným nastavením API, podobností s frontendem (používáme JavaScript na obou stranách) a integrací s databází MySQL.
 \end{itemize}
 
 \subsection*{Návrh API k BE}
 \begin{itemize}
-    \item Popis  napojení FE na BE atd
+    \item Dish
+    \begin{itemize}
+        \item add$_$dish - přidá nové jídlo do tabulky Dishes, ve FE je pro to příslušné tlačítko, při jehož stisknutí se objeví formulář.
+        \item get$_$dish - vyhledá potřebné jídlo v tabulce a vrátí všechny údaje o něm,  používá se při vyhledávání jídla.
+        \item get$_$all - vrátí informace o všech jídlech, zobrazuje všechna jídla v sekci.
+        \item change$_$dish - upraví informace o jídle
+        \item delete$_$dish - odstraní jídlo z databáze, pro úpravu a odstranění jsou také k dispozici příslušná tlačítka.
+        \item use$_$dish - vyhledá potřebné jídlo a ověří dostupnost produktů, které jsou k němu zapotřebí.
+     \end{itemize}   
+        
+    \item Shopping List
+     \begin{itemize}   
+        
+        \item add$_$list$_$product, delete$_$list$_$product, change$_$list$_$product, get$_$list$_$product, get$_$listAll$_$product- Podobně jako u podobných funkcí pro jídla, ale nyní pro tabulku Shopping list. Pro odstranění musí uživatel kliknout na zaškrtávací políčko vedle produktu, ostatní funkce jsou uživateli intuitivně zobrazeny.
+     \end{itemize}   
+        \item Product:
+\begin{itemize}
+    \item get product - vrací informace o produktu.
+    \item get all products - vrací informace o produktech.
+    \item add product - přidá produkt do databáze. Tlačítko + ve frontendu.
+    \item delete product - odstraní produkt z databáze. Tlačítko odstranění ve frontendu.
+    \item change product - změní atributy produktu. Tlačítko opravy ve frontendu.
+    \item move to list - odebere produkt ze stávajících a přidá jej do seznamu produktů.
+    \item check amount - zkontroluje množství produktu.
+\end{itemize}
+
+\item Calendar: 
+\begin{itemize}
+    \item get meal - vrátí informace o naplánovaném jídle. 
+    \item add meal - přidá naplánovaném jídlo do databáze. Tlačítko + ve frontendu.
+    \item delete meal - odstraní naplánované jídlo z databáze. Tlačítko odstranění ve frontendu.
+
+
+    \end{itemize}
+    \item  Klíčové datové struktury modelu:
+    \begin{itemize}
+    \item Dishes: tabulka, ve které jsou uloženy všechny informace o jídlech. Spojení M:N
+s tabulkou Products, v tabulce spojení je navíc atribut, který uchovává množství produktu potřebné pro toto konkrétní jídlo.
+\item Shopping List: tabulka, ve které jsou uloženy produkty, které si uživatel musí koupit.
+\item Products: tabulka pro uchovávání produktů, které má uživatel k dispozici.
+\item Calendar: tabulka dnů, do kterých uživatel přidal jídla. Má vztah M:N
+s tabulkou Jídla, tabulka spojení obsahuje atribut, který určuje, zda je jídlo přidáno k snídani, obědu nebo večeři.
+    \end{itemize}
 \end{itemize}
 
 \end{document}

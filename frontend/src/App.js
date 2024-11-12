@@ -1,18 +1,16 @@
-//import logo from './logo.svg';
 import './App.css';
 import React, { useState, useEffect, useRef  } from 'react';
 import axios from 'axios';
-import appIcon from './images/app_icon.JPG'; // Імпорт зображення
+import appIcon from './images/app_icon.JPG'; 
 import AddProduct from './components/AddProduct';
 import { ProductProvider } from './components/ProductContext';
 import ProductList from './components/ProductList';
-//import ProductsSection from './components/ProductsSection';
 import AddDish from './components/AddDish';
 import SearchDish from './components/SearchDish';
 import './components/SearchDish.css';
 
 function App() {
-  // -----------Create Vlada for dish button
+  // VLADYSLAVA
   const [dishes, setDishes] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
@@ -20,34 +18,47 @@ function App() {
       setIsFormOpen(!isFormOpen);
   };
 
-   // Функція для отримання всіх страв
-   const fetchDishes = async () => {
+   // Function for showing all dishes
+  const fetchDishes = async (searching = false) => {
       try {
-          const response = await axios.get('/get-all-dishes');
-          setDishes(response.data);
-          // console.log('Dishes:', response.data);
+          if (searching) {
+              setDishes([]); // clear list of dishes? when searching
+          } else{
+              const response = await axios.get('/get-all-dishes');
+              setDishes(response.data);
+          }          
       } catch (error) {
           console.error('Error fetching dishes:', error);
       }
   };
 
   useEffect(() => {
-      fetchDishes(); // Отримуємо страви при завантаженні компонента
+      fetchDishes(); // Retrieve dishes when the component loads
   }, []);
-  // ------------------End Vlada code
 
-  const [activeSection, setActiveSection] = useState('calendar'); // Стан для активної секції
+  const handleDelete = async (id) => {
+    try {
+        await axios.delete(`/delete-dish/${id}`);
+        // Show all dishes except for the deleted one
+        setDishes(dishes.filter(dish => dish.id !== id));
+    } catch (error) {
+        console.error('Error deleting the dish:', error);
+    }
+};
+  // VLADYSLAVA
 
-  // Створюємо рефи для кожної секції
+  const [activeSection, setActiveSection] = useState('calendar'); 
+
+  // Represents all section
   const calendarRef = useRef(null);
   const productsRef = useRef(null);
   const shoppingListRef = useRef(null);
   const dishesRef = useRef(null);
 
-  // Функція для відстеження скролу та визначення активної секції
+  // Function to track scrolling and identify the active section.
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY + window.innerHeight / 2; // Поточна позиція скролу
+      const scrollPosition = window.scrollY + window.innerHeight / 2; 
 
       if (dishesRef.current && scrollPosition >= dishesRef.current.offsetTop) {
         setActiveSection('dishes');
@@ -66,7 +77,7 @@ function App() {
     };
   }, []);
 
-  // Функція для плавного скролу до певної секції
+  // Function for smooth scrolling to a specific section.
   const scrollToSection = (ref) => {
     ref.current.scrollIntoView({ behavior: 'smooth' });
   };
@@ -102,12 +113,11 @@ function App() {
       </button>
     </nav>
 
-    {/* Секції сторінки */}
-    <section ref={calendarRef} id="calendar"> {/* Зона "Calendar" */}
+    {/* Section of page */}
+    <section ref={calendarRef} id="calendar"> 
       <h2>Calendar</h2>
-      {/* Вміст календаря */}
     </section>
-    <section ref={productsRef} id="products"> {/* Зона "Your products" */}
+    <section ref={productsRef} id="products"> 
 
       <ProductProvider>
         <AddProduct />
@@ -122,19 +132,19 @@ function App() {
       </ProductProvider>
 
     </section>
-    <section ref={shoppingListRef} id="shoppingList"> {/* Зона "Shopping list" */}
+    <section ref={shoppingListRef} id="shoppingList"> 
       <h2>Shopping List</h2>
-      {/* Вміст списку покупок */}
     </section>
-    <section ref={dishesRef} id="dishes"> {/* Зона "Dishes" */}
+    <section ref={dishesRef} id="dishes"> 
       <h2>Dishes</h2>
       <button onClick={toggleForm}>Add dish</button>
       {isFormOpen && <AddDish onClose={toggleForm} fetchDishes={fetchDishes}/>}
-      <SearchDish/>
-      {/* Вміст для страв */}
+      <SearchDish fetchDishes={fetchDishes}/>
+      {/* Dishes*/}
       <div className="dish-results">
             {dishes.map((dish) => (
                 <div key={dish.id} className="dish-card">
+                    <button className="delete-button" onClick={() => handleDelete(dish.id)}>🗑️</button>
                     <h3>{dish.name}</h3>
                     <p>Difficulty: {dish.difficulty_level}</p>
                     <p>Cooking time: {dish.cooking_time}</p>
@@ -142,11 +152,11 @@ function App() {
                     {dish.is_gluten_free && <p>Gluten-free</p>}
                     {dish.is_vegan && <p>Vegan</p>}
                     <p>Ingredients:</p>
-                    {/* <ul>
+                    <ul>
                         {dish.ingredients.map((ingredient, i) => (
                             <li key={i}>{ingredient.product_name} ({ingredient.required_amount} {ingredient.unit})</li>
                         ))}
-                    </ul> */}
+                    </ul>
                 </div>
             ))}
         </div>
