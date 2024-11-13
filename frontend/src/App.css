@@ -84,11 +84,6 @@ section#calendar {
   border-radius: 36px;
 
 }
-
-/*.product-item{*/
-/*  margin-bottom: 1vh;*/
-/*  background-color: white;*/
-/*}*/
 section#products {
   height: 77vh;                /* Висота секції 90% від висоти вікна */
   overflow-y: auto;            /* Додає вертикальну прокрутку */
@@ -98,12 +93,12 @@ section#products {
 
 .section-header {
   display: flex; /* Enables flexbox */
-  align-items: center; /* Vertically centers items */
-  justify-content: center; /* Horizontally centers items, if necessary */
+  align-items: center; /* vertically centers */
+  justify-content: center;
 }
 #products h2 {
   text-align: center;
-  margin: 0 10px 0 0; /* Remove margin on top/bottom and add margin-right for space */
+  margin: 0 10px 0 0;
 }
 .parent {
   position: relative;
@@ -116,24 +111,24 @@ section#products {
 }
 .show-form {
   position: absolute;
-  top: 60px; /* Відступ від кнопки додавання */
-  bottom: 20px; /* Position from the bottom */
+  top: 60px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%); /* Center it horizontally */
-  background-color: #c6dbe6; /* Background color */
-  border: 1px solid #ccc; /* Border styling */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Shadow for depth */
-  padding: 20px; /* Spacing inside the modal */
-  z-index: 1000; /* Ensure it appears above other content */
-  width: 50vh; /* Set a fixed width */
+  background-color: #c6dbe6;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  z-index: 1000; /* appearance above other content */
+  width: 50vh;
   height: fit-content;
   display: flex;
   flex-direction: column;
-  gap: 20px; /*gap between elements*/
-
+  gap: 20px; /*between elements*/
+  /* Плавний перехід/ modify */
   opacity: 1;
   visibility: visible;
-  transition: opacity 0.3s ease, visibility 0.3s ease; /* Плавний перехід */
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 .search-box{
   margin: 3vh auto;
@@ -141,40 +136,39 @@ section#products {
   display: flex;
 }
 .search-box input[type="text"]  {
-  width: 100%;             /* Ширина текстового поля на 100% від контейнера */
-  border: 1px solid #ccc;  /* Кордон для текстового поля */
-  border-radius: 5px;      /* Закруглення кутів (опціонально) */
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 .product-list {
   background-color: white;
-  display: flex;               /* Включає flexbox */
-  flex-wrap: wrap;            /* Дозволяє переносити елементи на новий рядок */
-  justify-content: center;     /* Вирівнює елементи по центру */
-  gap: 20px;                  /* Відступ між елементами */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
 }
 
 .product-item {
-  flex: 0 1 calc(50% - 20px); /* Ширина 50%, з урахуванням відступів */
-  box-sizing: border-box;      /* Дозволяє padding і border не впливати на ширину */
-  height: 200px;               /* Висота елемента (за потреби) */
-  background-color: #f0f0f0;  /* Колір фону для прикладу */
-  display: flex;               /* Для вирівнювання контенту */
-  justify-content: space-between;      /* Вирівнює контент по центру */
-  align-items: center;          /* Вирівнює по вертикалі */
+  flex: 0 1 calc(50% - 20px);
+  box-sizing: border-box;
+  height: 200px;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .product-item h3 {
-  flex: 1; /* Назва зліва */
+  flex: 1; /* name on the left */
   margin-left: 20px;
   font-size: 1.2em;
 }
 .product-details {
-  flex: 1; /* Характеристики справа */
+  flex: 1; /* details on the right */
   display: flex;
-  flex-direction: column; /* Розташовує характеристики в стовпчик */
+  flex-direction: column; /* details in colum */
   align-items: flex-start;
 }
 .product-details p {
-  margin: 0; /* Зменшує відстань між характеристиками */
-  /*padding: 0; /* Видаляє зайвий відступ, якщо він був */
+  margin: 0;
 }

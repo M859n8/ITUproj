@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useProducts } from './ProductContext';
 function AddProduct() {
+  //import fetch products to update list after insertion
   const { fetchProducts } = useProducts();
-  // Стани для відображення форми та збереження значень полів
+  //state for showing form
   const [showForm, setShowForm] = useState(false);
+  //state for product data
   const [product, setProduct] = useState({
     name: '',
     amount: '',
@@ -16,19 +18,16 @@ function AddProduct() {
     expiration_date: '',
   });
 
-  // Показати або приховати форму
+  //show or hide form
   const handleAddProductClick = () => {
     if(showForm){
       setShowForm(false);
-
     }else{
       setShowForm(true);
-
     }
-
   };
 
-  // Функція для оновлення полів у формData
+  //update new product values
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setProduct((prevData) => ({
@@ -38,28 +37,24 @@ function AddProduct() {
   };
 
 
-  // Обробник відправки форми
+  //send data to backend
   const handleAddItem = async (event) => {
-    event.preventDefault(); // Prevents the default form submission
+    event.preventDefault(); //prevents the default form submission
 
-    // Перевірка обов'язкових полів
+    //check mandatory data
     const { name, amount, unit, price } = product;
-
     if (!name || !amount || !unit || !price) {
       alert('Please fill in all required fields');
       return;
     }
     try {
-      // Надсилання POST-запиту на бекенд
       await axios.post('http://localhost:5000/add-product', {
         ...product,
         amount: parseInt(product.amount),
         price: parseFloat(product.price),
         expiration_date: product.expiration_date || null
       });
-      //alert(response.data); // Показуємо повідомлення про успішне додавання
-      // Виконайте будь-які дії з даними продукту (відправка на сервер тощо)
-      setShowForm(false); // Закрити форму після додавання продукту
+      setShowForm(false); //close form
       setProduct({
         name: '',
         amount: '',
@@ -70,21 +65,19 @@ function AddProduct() {
         vegan: false,
         expiration_date: '',
       });
-      // Оновлення списку продуктів
+      //upd product list
       fetchProducts();
     } catch (error) {
       alert('Error adding item: ' + (error.response?.data || error.message));
-    } // Очистити форму
+    }
   };
 
   return (
-  // for corrrect position of add form
     <div class="parent">
       <div className="section-header">
         <h2>YOUR PRODUCTS</h2>
         <button onClick={handleAddProductClick} className="addButton">+</button>
       </div>
-
       {showForm && (
         <form onSubmit={handleAddItem} >
 
