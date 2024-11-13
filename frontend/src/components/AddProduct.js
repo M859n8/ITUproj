@@ -66,14 +66,14 @@ function AddProduct() {
         expiration_date: '',
       });
       //upd product list
-      fetchProducts();
+      await fetchProducts();
     } catch (error) {
       alert('Error adding item: ' + (error.response?.data || error.message));
     }
   };
 
   return (
-    <div class="parent">
+    <div className="parent">
       <div className="section-header">
         <h2>YOUR PRODUCTS</h2>
         <button onClick={handleAddProductClick} className="addButton">+</button>
