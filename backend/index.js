@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json()); 
 
 //----------------------------------------------------- Maryna------------------------------------------------------------------
-// Маршрут для додавання пункту до списку
+
 app.post('/add-product', (req, res) => {
     const { name, amount, unit, price, lactose_free, gluten_free, vegan, expiration_date } = req.body;
 
@@ -26,7 +26,7 @@ app.post('/add-product', (req, res) => {
         lactose_free,
         gluten_free,
         vegan,
-        expiration_date || null  // передаємо NULL, якщо expiration_date не задано
+        expiration_date || null  
     ];
 
     connection.query(query, values, (err, results) => {
@@ -40,12 +40,10 @@ app.post('/add-product', (req, res) => {
 app.get('/get-product', (req, res) => {
     const { name } = req.query;
 
-    // Перевіряємо, чи переданий параметр
     if (!name) {
         return res.status(400).send('Please provide a name to search for');
     }
 
-    // Запит до бази даних з пошуком за назвою
     const query = 'SELECT * FROM products WHERE name LIKE ?';
     connection.query(query, [`%${name}%`], (err, results) => {
         if (err) {
@@ -61,7 +59,6 @@ app.get('/get-product', (req, res) => {
 
 app.get('/get-all-product', (req, res) => {
 
-    // Запит до бази даних з пошуком за назвою
     const query = 'SELECT * FROM products ';
     connection.query(query, (err, results) => {
         if (err) {
