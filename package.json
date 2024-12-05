@@ -3,7 +3,7 @@
     "concurrently": "^9.0.1"
   },
   "scripts": {
-    "dev": "concurrently \"npm start --prefix backend\" \"npm start --prefix frontend\""
+    "dev": "concurrently \"npm start --prefix backend\" \"npm start --prefix frontend1\""
 
   },
   "dependencies": {

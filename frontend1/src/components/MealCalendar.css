@@ -1,0 +1,21 @@
+#calendar{
+    padding: 10vh;
+    background-color: white;
+    border-radius: 36px;
+  
+  }
+  section#calendar {
+    height: 77vh;                /* Висота секції 90% від висоти вікна */
+    overflow-y: auto;            /* Додає вертикальну прокрутку */
+    padding: 10px;               /* Внутрішній відступ */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Легка тінь для секції */
+    
+  }
+  .calendar-data{
+    display: flex; 
+    justify-content: space-between;
+    align-items: center; 
+
+  }
+  
+ 
