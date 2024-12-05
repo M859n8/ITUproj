@@ -7,6 +7,8 @@ import { ProductProvider } from './components/ProductContext';
 import ProductList from './components/ProductList';
 import AddDish from './components/AddDish';
 import SearchDish from './components/SearchDish';
+import MealCalendar from './components/MealCalendar';
+
 import './components/SearchDish.css';
 
 function App() {
@@ -115,7 +117,7 @@ function App() {
 
     {/* Section of page */}
     <section ref={calendarRef} id="calendar"> 
-      <h2>Calendar</h2>
+      <MealCalendar/>
     </section>
     <section ref={productsRef} id="products"> 
 
