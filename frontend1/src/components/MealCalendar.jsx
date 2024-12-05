@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import axios from 'axios';
 import Calendar from 'react-calendar';
@@ -17,24 +17,21 @@ const MealCalendar = () => {
 
   const [noResultsMessage, setNoResultsMessage] = useState('');
 
-  // const fetchPlannedDishes = async () => {
-  //   try {
-  //     const response = await axios.get('http://localhost:5000/meals-for-day', {
-  //       params: { 
-  //         date: format(selectedDate, 'yyyy-MM-dd'), // Конвертуємо дату перед відправкою
-  //         meal_type: mealType 
-  //       }
-  //     });
-  //     setPlannedDishes(response.data); // Зберігаємо страви в стан
-  //   } catch (error) {
-  //     console.error('Error fetching products:', error);
-  //   }
-  // };
+  useEffect(() => {
+    const fetchPlannedDishes = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/meals-for-day', {
+          params: { date: format(selectedDate, 'yyyy-MM-dd'), mealType: 'breakfast' },
+        });
+        console.log('Received data:', response.data);
+        setPlannedDishes(response.data);
+      } catch (error) {
+        console.error('Error fetching meals:', error);
+      }
+    };
   
-  // Викликаємо функцію при першому рендері компонента
-  // useEffect(() => {
-  //   fetchPlannedDishes();
-  // }, [selectedDate, mealType]); // Залежності - зміна дати або типу страви
+   fetchPlannedDishes();
+  }, [selectedDate]); // Оновлення даних при зміні selectedDate або mealType
   
 
 
@@ -73,7 +70,6 @@ const MealCalendar = () => {
 
   const handleAddDish = async (dishId, mealType) => {
     try {
-      alert('Meal planned successfully1');
 
       const response = await axios.post('http://localhost:5000/plan-meal', {
         //calendar_id: selectedDate,
@@ -82,20 +78,16 @@ const MealCalendar = () => {
         dish_id: dishId,
         meal_type: mealType,
       });
-      alert('Meal planned successfully1ю2');
 
       console.log('Response from server:', response); // Логування відповіді сервера
 
       if (response.status === 201) {
-        alert('Meal planned successfully2');
 
         setSelectedDish(searchResults.find((dish) => dish.id === dishId));
         setSearchQuery('');
         setSearchResults([]);
-        alert('Meal planned successfully3');
       }
     } catch (error) {
-      alert('-Meal planned successfully');
 
       console.error('Error planning meal', error);
       setError('Failed to plan meal');
@@ -132,7 +124,8 @@ const MealCalendar = () => {
       {/* {error && <p style={{ color: 'red' }}>{error}</p>} //Виведення помилки */}
       {noResultsMessage && <p>{noResultsMessage}</p>}
 
-      {/* {plannedDishes && plannedDishes.length > 0 ? (
+      {plannedDishes && plannedDishes.length > 0 ? (
+        
         <ul>
           {plannedDishes.map((dish) => (
             <li key={dish.id}>
@@ -140,8 +133,7 @@ const MealCalendar = () => {
             </li>
           ))}
         </ul>
-      ) :  */}
-      {searchResults && searchResults.length > 0 ?  (
+      ) : searchResults && searchResults.length > 0 ?  (
         <ul>
           {searchResults.map((dish) => (
             <li key={dish.id}>
@@ -158,6 +150,7 @@ const MealCalendar = () => {
       )}
 
      
+    {/* <button onClick={() => fetchPlannedDishes(selectedDate)}>fffff</button> */}
       
 
       {/* {selectedDish && (
