@@ -122,6 +122,8 @@ function App() {
 
       {/* Section of page */}
       <section ref={calendarRef} id="calendar"> 
+        <h2>Calendar</h2>
+
         <MealCalendar />
       </section>
       <section ref={productsRef} id="products"> 

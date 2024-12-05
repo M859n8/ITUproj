@@ -41,7 +41,7 @@ const AddDish = ({ onClose, fetchDishes  }) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.post('/add-dish', {
+            const response = await axios.post('http://localhost:5000/add-dish', {
                 name: dishName,
                 difficulty_level: difficultyLevel,
                 cooking_time: cookingTime,

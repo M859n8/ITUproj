@@ -9,6 +9,7 @@ const ProductList = () => {
   const [productName, setProductName] = useState('');
   //save search results from backend, if there was no search -> null
   const [searchResults, setSearchResults] = useState(null);
+  const [noResultsMessage, setNoResultsMessage] = useState('');
 
   //update productName when user add text to search
   const handleInputChange = (event) => {
@@ -21,16 +22,24 @@ const ProductList = () => {
       //if product name empty, show all products
       if (productName.trim() === '') {
         setSearchResults(null);
+        setNoResultsMessage('');
         return;
       }
       try {
         const response = await axios.get('http://localhost:5000/get-product', {
           params: { name: productName }
         });
-        setSearchResults(response.data); //save search results
+        if (response.data.length === 0) {
+          setNoResultsMessage('No dishes found');
+          setSearchResults([]);
+        } else {
+          setNoResultsMessage('');
+          setSearchResults(response.data); //save search results
+        }
       } catch (error) {
-        alert('Error searching item: ' + error.response?.data || error.message);
-        setSearchResults(null);
+        setNoResultsMessage('No dishes found');
+
+        setSearchResults([]);
       }
     }
   };
@@ -46,6 +55,7 @@ const ProductList = () => {
           placeholder="Enter product name"
         />
       </div>
+      {noResultsMessage && <p>{noResultsMessage}</p>}
       {/*if search results not empty show them, otherwise show all products*/}
       {searchResults && searchResults.length > 0 ? (
         <div className="product-list">

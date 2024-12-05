@@ -14,8 +14,49 @@
   .calendar-data{
     display: flex; 
     justify-content: space-between;
-    align-items: center; 
+    gap: 20px; /* Відстань між календарем і списком прийомів їжі */
 
   }
+  .dates-part {
+    flex: 1; /* Займає 50% ширини секції */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
   
+  .meals-part {
+    flex: 1; /* Займає іншу половину секції */
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Відступи між прийомами їжі */
+  }
+  
+  .meal {
+    background-color: #f5f5f5; /* Світло-сірий фон */
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+  }
+
+
+/* Квадратна форма календаря */
+.custom-calendar {
+  width: 100%;
+  max-width: 350px; /* Регулює розмір календаря */
+  aspect-ratio: 1 / 1; /* Зберігає квадратну форму */
+}
+
+/* Стилізація клітинок */
+.react-calendar__tile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%; /* Робить клітинки квадратними */
+  aspect-ratio: 1 / 1; /* Квадратна форма клітинок */
+  font-size: 14px;
+  border: 1px solid transparent;
+  transition: background-color 0.3s, color 0.3s, border 0.3s;
+}
  
