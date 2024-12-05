@@ -121,13 +121,6 @@ function App() {
 
       <ProductProvider>
         <AddProduct />
-      </ProductProvider>
-
-
-
-      {/*<SearchProduct/>*/}
-
-      <ProductProvider>
         <ProductList />
       </ProductProvider>
 
