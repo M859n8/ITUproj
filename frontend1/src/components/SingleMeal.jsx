@@ -95,6 +95,20 @@ const SingleMeal = ({selectedDate, meal_type}) => {
     }
   };
 
+  // Видалення страви
+  const handleDeleteDish = async (dishId) => {
+    try {
+      await axios.delete(`http://localhost:5000/delete-planned-dish/${dishId}`, {
+        data: { date: format(selectedDate, 'yyyy-MM-dd'), meal_type },
+      });
+      // Оновлення списку після видалення
+      fetchPlannedDishes();
+
+    } catch (error) {
+      console.error('Error deleting dish:', error);
+    }
+  };
+
   
 
   return (
@@ -104,8 +118,12 @@ const SingleMeal = ({selectedDate, meal_type}) => {
       {plannedDishes && plannedDishes.length > 0 ? (
         <ul>
           {plannedDishes.map((dish) => (
-            <li key={dish.id}>{dish.name}</li>
+            <li key={dish.id}>{dish.name}
+            <button onClick={() => handleDeleteDish(dish.id)}>Delete</button>
+            </li>
+            
           ))}
+
         </ul>
       ) : (
 
@@ -115,6 +133,7 @@ const SingleMeal = ({selectedDate, meal_type}) => {
             value={searchQuery}
             onChange={handleInputChange}
             onKeyDown={handleSearch}
+            className="meal-search"
             placeholder={`Search for ${meal_type} dishes`}
           />
           {noResultsMessage && <p>{noResultsMessage}</p>}

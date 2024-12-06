@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { format } from 'date-fns';
 import axios from 'axios';
 import Calendar from 'react-calendar';
 import './MealCalendar.css';
@@ -19,7 +18,7 @@ const MealCalendar = () => {
         value={selectedDate}
         className="custom-calendar"
       />
-      <p>Selected Date: {selectedDate.toDateString()}</p>
+      {/* <p>Selected Date: {selectedDate.toDateString()}</p> */}
     </div>
 
     <div className="meals-part">

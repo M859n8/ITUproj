@@ -5,6 +5,8 @@ import axios from "axios";
 const ProductList = () => {
   //get products data
   const { products } = useProducts();
+
+  const { fetchProducts } = useProducts();
   //save search name
   const [productName, setProductName] = useState('');
   //save search results from backend, if there was no search -> null
@@ -44,6 +46,19 @@ const ProductList = () => {
     }
   };
 
+  const handleDeleteProduct = async (productId) => {
+    try {
+      // Передача параметра через URL (тіло не потрібне)
+      await axios.delete(`http://localhost:5000/delete-product/${productId}`);
+      
+      // Оновлення списку після видалення (якщо потрібно)
+      await fetchProducts();
+      // setProductName('');
+    } catch (error) {
+      console.error('Error deleting product:', error);
+    }
+  };
+
   return (
     <div>
       <div className="search-box">
@@ -51,7 +66,7 @@ const ProductList = () => {
           type="text"
           value={productName}
           onChange={handleInputChange}
-          onKeyPress={handleSearch} // Call handleSearch on key press
+          onKeyDown={handleSearch} // Call handleSearch on key press
           placeholder="Enter product name"
         />
       </div>
@@ -90,6 +105,8 @@ const ProductList = () => {
                   <p>Expiration Date: {product.expiration_date}</p>
                 )}
               </div>
+            <button onClick={() => handleDeleteProduct(product.id)}>Delete</button>
+
             </div>
           ))}
         </div>

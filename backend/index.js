@@ -72,6 +72,31 @@ app.get('/get-all-product', (req, res) => {
 
 });
 
+app.delete('/delete-product/:productId', (req, res) => {
+    const { productId } = req.params; // Отримуємо ID через params
+    
+    if (!productId) {
+        return res.status(400).send('Please provide a valid product ID');
+    }
+  
+    const query = `
+      DELETE FROM products
+      WHERE products.id = ?;
+    `;
+  
+    connection.query(query, [productId], (err, results) => {
+      if (err) {
+        console.error('Error deleting product:', err);
+        return res.status(500).json({ error: 'Failed to delete the product.' });
+      }
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ error: 'Product not found.' });
+      }
+      res.status(200).json({ message: 'Product deleted successfully.' });
+    });
+});
+
+
 // Планування страви на конкретний день
 app.post('/plan-meal', (req, res) => {
     const { date, dish_id, meal_type } = req.body;
@@ -155,6 +180,38 @@ app.get('/meals-for-day', (req, res) => {
         res.json(results);
     });
 });
+
+app.delete('/delete-planned-dish/:dishId', (req, res) => {
+    const { dishId } = req.params;
+    const { date, meal_type } = req.body;
+  
+    if (!dishId || !date || !meal_type) {
+      return res.status(400).json({
+        error: 'Dish ID, date, and meal type are required for deletion.',
+      });
+    }
+  
+    const query = `
+      DELETE FROM calendar_dishes
+      USING calendar_dishes
+      INNER JOIN calendar ON calendar.id = calendar_dishes.calendar_id
+      WHERE calendar.date = ? AND calendar_dishes.meal_type = ? AND calendar_dishes.dish_id = ?;
+    `;
+  
+    connection.query(query, [date, meal_type, dishId], (err, results) => {
+      if (err) {
+        console.error('Error deleting planned dish:', err);
+        return res.status(500).json({ error: 'Failed to delete the dish.' });
+      }
+  
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ error: 'Dish not found.' });
+      }
+  
+      res.status(200).json({ message: 'Dish deleted successfully.' });
+    });
+  });
+  
 
 //----------------------------------------------------- Vlada------------------------------------------------------------------
 app.post('/add-dish', (req, res) => {
