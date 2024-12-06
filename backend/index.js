@@ -126,15 +126,15 @@ app.post('/plan-meal', (req, res) => {
 
 app.get('/meals-for-day', (req, res) => {
     // Отримуємо обраний день з query-параметра (наприклад, ?date=2024-12-05)
-    const { date, mealType } = req.query;
+    const { date, meal_type } = req.query;
 
 
-    console.log('Received date:', date);
-    console.log('Received mealType:', mealType);
+    // console.log('Received date:', date);
+    // console.log('Received mealType:', meal_type);
 
     // Перевіряємо, чи передано дату та тип прийому їжі
-    if (!date || !mealType) {
-        return res.status(400).json({ error: 'Please provide a valid date and mealType (breakfast, lunch, dinner).' });
+    if (!date || !meal_type) {
+        return res.status(400).json({ error: 'Please provide a valid date and meal_type (breakfast, lunch, dinner).' });
     }
 
     const query = `
@@ -146,12 +146,12 @@ app.get('/meals-for-day', (req, res) => {
     `;
 
     // Виконуємо запит до бази даних
-    connection.query(query, [date, mealType], (err, results) => {
+    connection.query(query, [date, meal_type], (err, results) => {
         if (err) {
             console.error(err);
             return res.status(500).json({ error: 'An error occurred while retrieving meals.' });
         }
-        console.log('Query Results:', results);  // Логування результатів
+        // console.log('Query Results:', results);  // Логування результатів
         res.json(results);
     });
 });
