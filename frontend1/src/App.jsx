@@ -5,55 +5,12 @@ import appIcon from './images/app_icon.JPG';
 import AddProduct from './components/AddProduct.jsx';
 import { ProductProvider } from './components/ProductContext.jsx';
 import ProductList from './components/ProductList.jsx';
-import AddDish from './components/AddDish.jsx';
-import SearchDish from './components/SearchDish.jsx';
+import Dish from './components/Dish.jsx';
 import MealCalendar from './components/MealCalendar.jsx';
+import ShoppingList from './components/ShoppingList.jsx';
 
-import './components/SearchDish.css';
 
 function App() {
-  // VLADYSLAVA
-  const [dishes, setDishes] = useState([]);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-
-  const toggleForm = () => {
-      setIsFormOpen(!isFormOpen);
-  };
-
-   // Function for showing all dishes
-  const fetchDishes = async (searching = false) => {
-      try {
-          if (searching) {
-              setDishes([]); // clear list of dishes? when searching
-          } else{
-              const response = await axios.get('http://localhost:5000/get-all-dishes');
-              if (Array.isArray(response.data)) {
-                setDishes(response.data);
-              } else {
-                  console.error('Expected an array, but received:', response.data);
-                  setDishes([]); // Set empty array in case of unexpected response
-              }
-            }          
-      } catch (error) {
-          console.error('Error fetching dishes:', error);
-      }
-  };
-
-  useEffect(() => {
-      fetchDishes(); // Retrieve dishes when the component loads
-  }, []);
-
-  const handleDelete = async (id) => {
-    try {
-        await axios.delete(`http://localhost:5000/delete-dish/${id}`);
-        // Show all dishes except for the deleted one
-        setDishes(dishes.filter(dish => dish.id !== id));
-    } catch (error) {
-        console.error('Error deleting the dish:', error);
-    }
-  };
-  // VLADYSLAVA
-
   const [activeSection, setActiveSection] = useState('calendar'); 
 
   // Represents all section
@@ -133,33 +90,10 @@ function App() {
 
       </section>
       <section ref={shoppingListRef} id="shoppingList"> 
-        <h2>Shopping List</h2>
+        <ShoppingList />
       </section>
       <section ref={dishesRef} id="dishes"> 
-        <h2>Dishes</h2>
-        <button onClick={toggleForm}>Add dish</button>
-        {isFormOpen && <AddDish onClose={toggleForm} fetchDishes={fetchDishes}/>}
-        <SearchDish fetchDishes={fetchDishes}/>
-        {/* Dishes*/}
-        <div className="dish-results">
-              {dishes.map((dish) => (
-                  <div key={dish.id} className="dish-card">
-                      <button className="delete-button" onClick={() => handleDelete(dish.id)}>🗑️</button>
-                      <h3>{dish.name}</h3>
-                      <p>Difficulty: {dish.difficulty_level}</p>
-                      <p>Cooking time: {dish.cooking_time}</p>
-                      {dish.is_lactose_free && <p>Lactose-free</p>}
-                      {dish.is_gluten_free && <p>Gluten-free</p>}
-                      {dish.is_vegan && <p>Vegan</p>}
-                      <p>Ingredients:</p>
-                      <ul>
-                          {dish.ingredients.map((ingredient, i) => (
-                              <li key={i}>{ingredient.product_name} ({ingredient.required_amount} {ingredient.unit})</li>
-                          ))}
-                      </ul>
-                  </div>
-              ))}
-          </div>
+        <Dish/>
       </section>
     </div>
   )
