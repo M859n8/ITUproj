@@ -71,6 +71,148 @@ app.get('/get-all-product', (req, res) => {
     });
 
 });
+
+app.delete('/delete-product/:productId', (req, res) => {
+    const { productId } = req.params; // Отримуємо ID через params
+    
+    if (!productId) {
+        return res.status(400).send('Please provide a valid product ID');
+    }
+  
+    const query = `
+      DELETE FROM products
+      WHERE products.id = ?;
+    `;
+  
+    connection.query(query, [productId], (err, results) => {
+      if (err) {
+        console.error('Error deleting product:', err);
+        return res.status(500).json({ error: 'Failed to delete the product.' });
+      }
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ error: 'Product not found.' });
+      }
+      res.status(200).json({ message: 'Product deleted successfully.' });
+    });
+});
+
+
+// Планування страви на конкретний день
+app.post('/plan-meal', (req, res) => {
+    const { date, dish_id, meal_type } = req.body;
+
+    const findCalendarQuery = `
+        SELECT id FROM calendar WHERE date = ?
+    `;
+    const insertCalendarQuery = `
+        INSERT INTO calendar (date) VALUES (?)
+    `;
+    const insertCalendarDishQuery = `
+        INSERT INTO calendar_dishes (calendar_id, dish_id, meal_type)
+        VALUES (?, ?, ?)
+    `;
+
+    // Перевірка, чи існує дата в таблиці `calendar`
+    connection.query(findCalendarQuery, [date], (err, results) => {
+        if (err) {
+            console.error('Error finding calendar date:', err);
+            return res.status(500).json({ error: 'Failed to find calendar date' });
+        }
+
+        if (results.length > 0) {
+            // Якщо дата існує, беремо `id`
+            const existingCalendarId = results[0].id;
+            addDishToCalendar(existingCalendarId);
+        } else {
+            // Якщо дати немає, додаємо її в таблицю
+            connection.query(insertCalendarQuery, [date], (err, results) => {
+                if (err) {
+                    console.error('Error inserting calendar date:', err);
+                    return res.status(500).json({ error: 'Failed to insert calendar date' });
+                }
+                const newCalendarId = results.insertId;
+                addDishToCalendar(newCalendarId);
+            });
+        }
+    });
+
+    // Додаємо страву до календаря
+    function addDishToCalendar(calendar_id) {
+        connection.query(insertCalendarDishQuery, [calendar_id, dish_id, meal_type], (err, results) => {
+            if (err) {
+                console.error('Error planning meal:', err);
+                return res.status(500).json({ error: 'Failed to plan meal' });
+            }
+            res.status(201).json({ message: 'Meal planned successfully' });
+        });
+    }
+});
+
+
+app.get('/meals-for-day', (req, res) => {
+    // Отримуємо обраний день з query-параметра (наприклад, ?date=2024-12-05)
+    const { date, meal_type } = req.query;
+
+
+    // console.log('Received date:', date);
+    // console.log('Received mealType:', meal_type);
+
+    // Перевіряємо, чи передано дату та тип прийому їжі
+    if (!date || !meal_type) {
+        return res.status(400).json({ error: 'Please provide a valid date and meal_type (breakfast, lunch, dinner).' });
+    }
+
+    const query = `
+        SELECT dishes.*
+        FROM calendar_dishes
+        INNER JOIN calendar ON calendar.id = calendar_dishes.calendar_id
+        INNER JOIN dishes ON dishes.id = calendar_dishes.dish_id
+        WHERE calendar.date = ? AND calendar_dishes.meal_type = ?;
+    `;
+
+    // Виконуємо запит до бази даних
+    connection.query(query, [date, meal_type], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'An error occurred while retrieving meals.' });
+        }
+        // console.log('Query Results:', results);  // Логування результатів
+        res.json(results);
+    });
+});
+
+app.delete('/delete-planned-dish/:dishId', (req, res) => {
+    const { dishId } = req.params;
+    const { date, meal_type } = req.body;
+  
+    if (!dishId || !date || !meal_type) {
+      return res.status(400).json({
+        error: 'Dish ID, date, and meal type are required for deletion.',
+      });
+    }
+  
+    const query = `
+      DELETE FROM calendar_dishes
+      USING calendar_dishes
+      INNER JOIN calendar ON calendar.id = calendar_dishes.calendar_id
+      WHERE calendar.date = ? AND calendar_dishes.meal_type = ? AND calendar_dishes.dish_id = ?;
+    `;
+  
+    connection.query(query, [date, meal_type, dishId], (err, results) => {
+      if (err) {
+        console.error('Error deleting planned dish:', err);
+        return res.status(500).json({ error: 'Failed to delete the dish.' });
+      }
+  
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ error: 'Dish not found.' });
+      }
+  
+      res.status(200).json({ message: 'Dish deleted successfully.' });
+    });
+  });
+  
+
 //----------------------------------------------------- Vlada------------------------------------------------------------------
 app.post('/add-dish', (req, res) => {
     const { name, difficulty_level, cooking_time, is_vegan, is_gluten_free, is_lactose_free, ingredients } = req.body;

@@ -14,8 +14,110 @@
   .calendar-data{
     display: flex; 
     justify-content: space-between;
-    align-items: center; 
+    gap: 20px; /* Відстань між календарем і списком прийомів їжі */
+    padding: 10px;
 
   }
+  .calendar-data h3{
+    margin: 0;
+  }
+  .dates-part {
+    flex: 1; /* Займає 50% ширини секції */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
   
- 
+  .meals-part {
+    flex: 1; /* Займає іншу половину секції */
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Відступи між прийомами їжі */
+  }
+  
+  .meal {
+    flex: 1; /* Рівномірний розподіл між прийомами їжі */
+    background-color: #f5f5f5; /* Світло-сірий фон */
+    border: 1px solid #ddd;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 20px;
+    text-align: center;
+    min-height: max-content;
+  }
+  .meal-search{
+    margin: 5px;
+  }
+
+
+/* Квадратна форма календаря */
+.custom-calendar {
+  width: 90%;
+  height: auto;
+  max-width: 400px; /* Регулює розмір календаря */
+  aspect-ratio: 1 / 1; /* Зберігає квадратну форму */
+  overflow-y: auto; /* scroling if overflow */
+
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  font-family: Arial, sans-serif;
+}
+
+/* Стилізація клітинок */
+.react-calendar__tile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%; /* Робить клітинки квадратними */
+  aspect-ratio: 1 / 1; /* Квадратна форма клітинок */
+  font-size: 14px;
+  border: 1px solid transparent;
+  /* transition: background-color 0.3s, color 0.3s, border 0.3s; */
+}
+
+/* Дата, яка обрана */
+.custom-calendar .react-calendar__tile--active {
+  background-color: #c6dbe6;
+  color: white;
+  /* border-radius: 50%; */
+}
+/* Дати, на які наводиться курсор */
+/* .custom-calendar .react-calendar__tile:hover {
+  background-color: #f9f9f9;
+  border-radius: 50%; 
+} */
+ /* Стилізація заголовка (місяці, роки) */
+.custom-calendar .react-calendar__navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.custom-calendar .react-calendar__navigation button {
+  background: none;
+  border: none;
+  /* color: #2683b5; */
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 5px;
+}
+
+/* .custom-calendar .react-calendar__navigation button:hover {
+  color: #0056b3;
+} */
+
+/* Стилізація стрілок */
+.custom-calendar .react-calendar__navigation button:disabled {
+  color: #ccc;
+}
+
+.custom-calendar .react-calendar__navigation button:enabled:hover {
+  background-color: #e6e6e6;
+  border-radius: 50%;
+}
+

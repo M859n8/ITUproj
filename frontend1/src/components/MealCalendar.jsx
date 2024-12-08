@@ -1,32 +1,45 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import Calendar from 'react-calendar';
 import './MealCalendar.css';
+import SingleMeal from './SingleMeal';
+
 
 const MealCalendar = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
-
+  
+   
+  
   return (
     <div className="calendar-data">
     <div className="dates-part">
-      <h2>Calendar</h2>
       <Calendar
         onChange={setSelectedDate}
         value={selectedDate}
+        className="custom-calendar"
       />
-      <p>Selected Date: {selectedDate.toDateString()}</p>
+      {/* <p>Selected Date: {selectedDate.toDateString()}</p> */}
     </div>
 
     <div className="meals-part">
-      <h2>Meals</h2>
       <div className="meal">
-        <h3>Breakfast</h3>
-        
+        <SingleMeal
+        selectedDate = {selectedDate}
+        meal_type = "breakfast"
+        />
+       
       </div>
       <div className="meal">
-        <h3>Lunch</h3>
+        <SingleMeal
+          selectedDate = {selectedDate}
+          meal_type = "lunch"
+          />
       </div>
       <div className="meal">
-        <h3>Dinner</h3>
+        <SingleMeal
+          selectedDate = {selectedDate}
+          meal_type = "dinner"
+          />
       </div>
     </div>
     </div>

@@ -54,9 +54,7 @@ section {
 
 
 }
-section#calendar {
-  margin-top: min(25vh, 120px);
-}
+
 
 #dishes,
 #shoppingList{ 
@@ -71,6 +69,15 @@ section#calendar {
 }
 
 /* M A R Y N A*/
+
+section#calendar {
+  margin-top: min(25vh, 120px);
+}
+#calendar h2 {
+  text-align: center;
+  margin: 10px 10px 10px 0;
+}
+
 #products{
   padding: 10vh;
   background-color: white;
