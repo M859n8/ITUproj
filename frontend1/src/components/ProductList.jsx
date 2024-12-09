@@ -59,6 +59,15 @@ const ProductList = () => {
     }
   };
 
+  // const handleUpdateProduct = async () => {
+  //   try {
+  //     await axios.put(`http://localhost:5000/update-product/${updatedProduct.id}`, updatedProduct);
+  //     await fetchProducts();
+  //   } catch (error) {
+  //     console.error('Error updating product:', error);
+  //   }
+  // };
+
   return (
     <div>
       <div className="search-box">
@@ -106,6 +115,7 @@ const ProductList = () => {
                 )}
               </div>
             <button onClick={() => handleDeleteProduct(product.id)}>Delete</button>
+            {/* <button onClick={handleUpdateProduct}>Update Product</button> */}
 
             </div>
           ))}

@@ -11,7 +11,9 @@ app.use(express.json());
 //----------------------------------------------------- Maryna------------------------------------------------------------------
 
 app.post('/add-product', (req, res) => {
-    const { name, amount, unit, price, lactose_free, gluten_free, vegan, expiration_date } = req.body;
+    const { 
+        name, amount, unit, price, lactose_free, gluten_free, 
+        vegan, expiration_date } = req.body;
 
     const query = `
         INSERT INTO products (name, amount, unit, price, lactose_free, gluten_free, vegan, expiration_date) 
@@ -95,6 +97,43 @@ app.delete('/delete-product/:productId', (req, res) => {
       res.status(200).json({ message: 'Product deleted successfully.' });
     });
 });
+
+app.put('/update-product/:productId', (req, res) => {
+    const { productId } = req.params;
+    const {
+      name, amount, unit, price, lactose_free, gluten_free, vegan,
+      expiration_date,
+    } = req.body;
+    
+  
+    const query = `
+      UPDATE products
+      SET name = ?, amount = ?, unit = ?, price = ?, lactose_free = ?, gluten_free = ?, vegan = ?, expiration_date = ?
+      WHERE id = ?;
+    `;
+  
+    const values = [
+      name, amount, unit, price,
+      lactose_free, gluten_free,
+      vegan, expiration_date,
+      productId,
+    ];
+  
+    connection.query(query, values, (err, results) => {
+      if (err) {
+        console.error('Error updating product:', err);
+        return res.status(500).json({ error: 'Failed to update the product.' });
+      }
+  
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ error: 'Product not found.' });
+      }
+  
+      res.status(200).json({ message: 'Product updated successfully.' });
+    });
+  });
+
+  //-------------------------calendar-----------------------------//
 
 
 // Планування страви на конкретний день
