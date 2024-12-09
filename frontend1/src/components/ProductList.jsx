@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import { useProducts } from './ProductContext.jsx';
+import ProductEdit from './ProductEdit';
 import axios from "axios";
 
 const ProductList = () => {
@@ -10,11 +11,15 @@ const ProductList = () => {
   //save search name
   const [productName, setProductName] = useState('');
   //save search results from backend, if there was no search -> null
-  const [searchResults, setSearchResults] = useState(null);
-  const [noResultsMessage, setNoResultsMessage] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [noResults, setNoResults] = useState(false);
+
+  const [editingProductId, setEditingProductId] = useState(null);
+
 
   //update productName when user add text to search
   const handleInputChange = (event) => {
+
     setProductName(event.target.value);
   };
   //when user press "Enter"
@@ -24,24 +29,26 @@ const ProductList = () => {
       //if product name empty, show all products
       if (productName.trim() === '') {
         setSearchResults(null);
-        setNoResultsMessage('');
         return;
       }
       try {
         const response = await axios.get('http://localhost:5000/get-product', {
           params: { name: productName }
         });
+       
+
         if (response.data.length === 0) {
-          setNoResultsMessage('No dishes found');
           setSearchResults([]);
+          setNoResults(true);
         } else {
-          setNoResultsMessage('');
           setSearchResults(response.data); //save search results
+          setNoResults(false);
         }
       } catch (error) {
-        setNoResultsMessage('No dishes found');
 
         setSearchResults([]);
+        setNoResults(true);
+
       }
     }
   };
@@ -59,14 +66,14 @@ const ProductList = () => {
     }
   };
 
-  // const handleUpdateProduct = async () => {
-  //   try {
-  //     await axios.put(`http://localhost:5000/update-product/${updatedProduct.id}`, updatedProduct);
-  //     await fetchProducts();
-  //   } catch (error) {
-  //     console.error('Error updating product:', error);
-  //   }
-  // };
+ 
+  const handleEditClick = (productId) => {
+    setEditingProductId(productId);
+  };
+  const handleCancelEdit = () => {
+    setEditingProductId(null); // Скидаємо редагування
+    fetchProducts();
+  };
 
   return (
     <div>
@@ -79,48 +86,42 @@ const ProductList = () => {
           placeholder="Enter product name"
         />
       </div>
-      {noResultsMessage && <p>{noResultsMessage}</p>}
-      {/*if search results not empty show them, otherwise show all products*/}
-      {searchResults && searchResults.length > 0 ? (
-        <div className="product-list">
-          {searchResults.map((product) => (
-            <div key={product.id} className="product-item">
-              <h3>{product.name}</h3>
-              <div className="product-details">
-                <p>Amount: {product.amount} {product.unit}</p>
-                <p>Price: {product.price}$</p>
-                <p>Lactose Free: {product.lactose_free ? 'Yes' : 'No'}</p>
-                <p>Gluten Free: {product.gluten_free ? 'Yes' : 'No'}</p>
-                <p>Vegan: {product.vegan ? 'Yes' : 'No'}</p>
-                {product.expiration_date && (
-                  <p>Expiration Date: {product.expiration_date}</p>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="product-list">
-          {products.map((product) => (
-            <div key={product.id} className="product-item">
-              <h3>{product.name}</h3>
-              <div className="product-details">
-                <p>Amount: {product.amount} {product.unit}</p>
-                <p>Price: {product.price}$</p>
-                <p>Lactose Free: {product.lactose_free ? 'Yes' : 'No'}</p>
-                <p>Gluten Free: {product.gluten_free ? 'Yes' : 'No'}</p>
-                <p>Vegan: {product.vegan ? 'Yes' : 'No'}</p>
-                {product.expiration_date && (
-                  <p>Expiration Date: {product.expiration_date}</p>
-                )}
-              </div>
-            <button onClick={() => handleDeleteProduct(product.id)}>Delete</button>
-            {/* <button onClick={handleUpdateProduct}>Update Product</button> */}
 
-            </div>
-          ))}
-        </div>
-      )}
+      {/*if search results not empty show them, otherwise show all products*/}
+      <div className="product-list">
+        {noResults ? (
+          // Пошуковий запит є, але результати порожні
+          <p>Not found</p>
+        ) : (
+          // Якщо є результати пошуку, показати їх, інакше показати всі продукти
+          (searchResults && searchResults.length > 0 ? searchResults : products).map((product) => (
+            <div key={product.id} className="product-item">
+            {editingProductId === product.id ? (
+              // Якщо цей продукт редагується, показуємо форму редагування
+              <ProductEdit product={product} handleCancelEdit={handleCancelEdit} />
+            ) : (
+              <>
+              <h3>{product.name}</h3>
+              <div className="product-details">
+                <p>Amount: {product.amount} {product.unit}</p>
+                <p>Price: {product.price}$</p>
+                <p>Lactose Free: {product.lactose_free ? 'Yes' : 'No'}</p>
+                <p>Gluten Free: {product.gluten_free ? 'Yes' : 'No'}</p>
+                <p>Vegan: {product.vegan ? 'Yes' : 'No'}</p>
+                {product.expiration_date && (
+                  <p>Expiration Date: {product.expiration_date}</p>
+                )}
+              </div>
+              <button onClick={() => handleDeleteProduct(product.id)}>Delete</button>
+              <button onClick={() => handleEditClick(product.id)}>Update Product</button>
+            
+              </>
+            )}
+          </div>
+          ))
+        )}
+      </div>
+
 
     </div>
   );
