@@ -4,9 +4,9 @@
   },
   "scripts": {
     "dev": "concurrently \"npm start --prefix backend\" \"npm start --prefix frontend1\""
-
   },
   "dependencies": {
-    "axios": "^1.7.7"
+    "axios": "^1.7.7",
+    "react-calendar": "^5.1.0"
   }
 }

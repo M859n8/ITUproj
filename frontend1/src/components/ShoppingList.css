@@ -1,0 +1,207 @@
+/* Загальні стилі для секції */
+
+  
+  /* Заголовок секції */
+  .shopping-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 5px; /* Відстань між елементами */
+  }
+  
+  .shopping-list-header input[type="text"] {
+    flex: 1; /* Займає всю доступну ширину */
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc; /* Світло-сірий ободок */
+    border-radius: 5px; /* Невелике закруглення */
+    outline: none;
+    box-sizing: border-box;
+  }
+
+  /* Кнопка Search */
+  .search-button {
+    background-color: #2683b5; /* Синій колір */
+    color: #fff; /* Білий текст */
+    border: none;
+    border-radius: 5px; /* Гострі краї */
+    padding: 10px 20px;
+    /* font-size: 16px; */
+    cursor: pointer;
+    height: 100%; /* Вирівнювання висоти з полем вводу */
+  }
+
+  .search-button:hover {
+    background-color: #1d6a92; /* Темніший синій при наведенні */
+  }
+
+  /* Кнопка Add Product */
+  .add-product-button {
+    background-color: #2683b5; /* Синій колір */
+    color: #fff; /* Білий текст */
+    border: none;
+    border-radius: 20px; /* Більш заокруглені краї */
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    height: 100%; /* Вирівнювання висоти з кнопкою Search */
+  }
+
+  .add-product-button:hover {
+    background-color: #1d6a92; /* Темніший синій при наведенні */
+  }
+
+  /* List of product */
+  .shopping-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.shopping-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    /* border-bottom: 1px solid #ddd; */
+    background-color: white;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.product-info {
+    display: flex;
+    align-items: center;
+}
+
+.product-info span {
+    margin-right: 10px;
+}
+
+.product-input {
+    width: 60px; /* Невелика ширина */
+    /* height: 30px;  */
+    margin-right: 10px;
+}
+
+  
+
+  /* Форма додавання продуктів */
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    padding: 20px; /* Відступи для кращої видимості форми */
+    overflow-y: auto; /* Додаємо скрол, якщо вікно замале для контенту */
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+}
+
+.modal-content {
+    position: relative;
+    width: 600px;
+    max-width: 90%;
+    max-height: 80%;
+    background: white;
+    border-radius: 10px;
+    padding: 20px 30px; /* Відступи всередині */
+    z-index: 1100;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column; /* Дозволяє вертикальне вирівнювання */
+    justify-content: space-between; /* Залишає простір для кнопок знизу */
+    overflow: hidden; /* Приховує надлишок */
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border: none;
+    background: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.form-container {
+    display: flex;
+    justify-content: space-between; /* Секції розташовані горизонтально */
+    align-items: flex-start; /* Вирівнювання по верхньому краю */
+    gap: 20px;
+    flex-grow: 1; /* Займає весь доступний простір по висоті */
+    width: 100%; /* Розтягується по ширині батьківського контейнера */
+    overflow-y: auto; /* Прокрутка для великого вмісту */
+    padding: 10px; /* Відступи всередині форми */
+    box-sizing: border-box; /* Ураховує відступи у ширину/висоту */
+}
+
+.form-section {
+    flex: 1;
+    /* display: flex;
+    flex-direction: column;
+    gap: 10px; */
+    min-width: 0; 
+}
+
+.form-divider {
+    width: 2px;
+    background: #ddd;
+    /* margin: 0 10px; */
+    flex-shrink: 0;
+}
+
+.product-select,
+.form-section input[type="text"],
+.form-section input[type="number"],
+.form-section input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    /* margin-bottom: 10px; */
+}
+
+.submit-button {
+    align-self: center; /* Центрує кнопку внизу */
+    width: 200px;
+    margin: 0 auto;
+    padding: 10px;
+    background-color: #2683b5;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+    background-color: #1e6c94;
+}
+
