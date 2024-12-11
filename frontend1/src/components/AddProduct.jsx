@@ -33,6 +33,7 @@ function AddProduct() {
     setProduct((prevData) => ({
       ...prevData,
       [name]: type === 'checkbox' ? checked : value,
+      
     }));
   };
 
@@ -52,6 +53,7 @@ function AddProduct() {
         ...product,
         amount: parseInt(product.amount),
         price: parseFloat(product.price),
+        
         expiration_date: product.expiration_date || null
       });
       setShowForm(false); //close form

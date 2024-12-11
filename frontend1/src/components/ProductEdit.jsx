@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { format } from 'date-fns';
+import './ProductList.css';
 import axios from "axios";
 
 const ProductEdit = ({ product, handleCancelEdit }) => {
@@ -8,7 +10,7 @@ const ProductEdit = ({ product, handleCancelEdit }) => {
     const { name, value } = e.target;
     setUpdatedProduct((prevState) => ({
       ...prevState,
-      [name]: value,
+      [name]: value ? value : null,  // Якщо значення порожнє, встановлюємо null
     }));
   };
 
@@ -17,14 +19,15 @@ const ProductEdit = ({ product, handleCancelEdit }) => {
       // Відправка запиту на оновлення продукту
       const response = await axios.put(`http://localhost:5000/update-product/${updatedProduct.id}`, {
         ...updatedProduct,
+        expiration_date: updatedProduct.expiration_date ? format(updatedProduct.expiration_date, 'yyyy-MM-dd') : null, // Якщо дата є, форматуємо її, якщо ні - передаємо null
+
       });
 
       if (response.status === 200) {
         // Якщо успішно оновлено, закриваємо форму редагування
         console.log('Updated Product:', updatedProduct);
         handleCancelEdit(); // Викликаємо функцію для скидання стану редагування
-    //setEditingProductId(null); // Скидаємо редагування
-    //await fetchProducts();
+    
       }
     } catch (error) {
       console.error('Error updating product:', error);
@@ -38,17 +41,20 @@ const ProductEdit = ({ product, handleCancelEdit }) => {
   };
 
   return (
-    <div className="product-edit-form">
-      <h3>Update Product</h3>
+    <div className="product-item-edit" >
+      <div className="product-name">
+        
       <label>
-        Name:
         <input
           type="text"
           name="name"
           value={updatedProduct.name}
           onChange={handleChange}
+          className="edit-input"
         />
       </label>
+      </div>
+      <div className="product-details">
       <label>
         Amount:
         <input
@@ -56,6 +62,7 @@ const ProductEdit = ({ product, handleCancelEdit }) => {
           name="amount"
           value={updatedProduct.amount}
           onChange={handleChange}
+          className="edit-input"
         />
       </label>
       <label>
@@ -65,9 +72,10 @@ const ProductEdit = ({ product, handleCancelEdit }) => {
           name="price"
           value={updatedProduct.price}
           onChange={handleChange}
+          className="edit-input"
         />
       </label>
-      <label>
+      <label className="checkbox-label">
         Lactose Free:
         <input
           type="checkbox"
@@ -77,9 +85,10 @@ const ProductEdit = ({ product, handleCancelEdit }) => {
             ...prevState,
             lactose_free: !prevState.lactose_free
           }))}
+          
         />
       </label>
-      <label>
+      <label className="checkbox-label">
         Gluten Free:
         <input
           type="checkbox"
@@ -91,7 +100,7 @@ const ProductEdit = ({ product, handleCancelEdit }) => {
           }))}
         />
       </label>
-      <label>
+      <label className="checkbox-label">
         Vegan:
         <input
           type="checkbox"
@@ -108,12 +117,18 @@ const ProductEdit = ({ product, handleCancelEdit }) => {
         <input
           type="date"
           name="expiration_date"
-          value={updatedProduct.expiration_date}
+          value={updatedProduct.expiration_date ? format(new Date(updatedProduct.expiration_date), 'yyyy-MM-dd') : ''}
+    
           onChange={handleChange}
+          className="edit-input"
         />
       </label>
-      <button onClick={handleSave}>Save</button>
-      <button onClick={handleCancel}>Cancel</button>
+      </div>
+      <div className="product-actions-edit">
+        <button onClick={handleSave}>Save</button>
+        <button onClick={handleCancel}>Cancel</button>
+      </div>
+
     </div>
   );
 };

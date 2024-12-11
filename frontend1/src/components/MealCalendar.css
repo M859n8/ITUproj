@@ -37,7 +37,7 @@
   
   .meal {
     flex: 1; /* Рівномірний розподіл між прийомами їжі */
-    background-color: #f5f5f5; /* Світло-сірий фон */
+    background-color: #e5eef3;    /* Світло-сірий фон */
     border: 1px solid #ddd;
     padding: 10px;
     box-sizing: border-box;
@@ -61,6 +61,7 @@
   border: 1px solid #ccc;
   border-radius: 10px;
   padding: 10px;
+  /* background-color: #e5eef3; */
   background-color: #f9f9f9;
   font-family: Arial, sans-serif;
 }
@@ -117,7 +118,8 @@
 }
 
 .custom-calendar .react-calendar__navigation button:enabled:hover {
-  background-color: #e6e6e6;
-  border-radius: 50%;
+  background-color: #c6dbe6;
+
+  border-radius: 20%;
 }
 

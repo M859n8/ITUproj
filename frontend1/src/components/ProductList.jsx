@@ -1,6 +1,9 @@
 import React, {useState} from 'react';
 import { useProducts } from './ProductContext.jsx';
 import ProductEdit from './ProductEdit';
+import { format } from 'date-fns';
+
+import './ProductList.css';
 import axios from "axios";
 
 const ProductList = () => {
@@ -95,13 +98,13 @@ const ProductList = () => {
         ) : (
           // Якщо є результати пошуку, показати їх, інакше показати всі продукти
           (searchResults && searchResults.length > 0 ? searchResults : products).map((product) => (
-            <div key={product.id} className="product-item">
+            <div className={`product-item ${editingProductId === product.id ? 'editing' : ''}`}>
             {editingProductId === product.id ? (
               // Якщо цей продукт редагується, показуємо форму редагування
               <ProductEdit product={product} handleCancelEdit={handleCancelEdit} />
             ) : (
               <>
-              <h3>{product.name}</h3>
+              <h3 className="product-name">{product.name}</h3>
               <div className="product-details">
                 <p>Amount: {product.amount} {product.unit}</p>
                 <p>Price: {product.price}$</p>
@@ -109,12 +112,13 @@ const ProductList = () => {
                 <p>Gluten Free: {product.gluten_free ? 'Yes' : 'No'}</p>
                 <p>Vegan: {product.vegan ? 'Yes' : 'No'}</p>
                 {product.expiration_date && (
-                  <p>Expiration Date: {product.expiration_date}</p>
+                  <p>Expiration Date: {format(new Date(product.expiration_date), 'yyyy-MM-dd')}</p>
                 )}
               </div>
-              <button onClick={() => handleDeleteProduct(product.id)}>Delete</button>
-              <button onClick={() => handleEditClick(product.id)}>Update Product</button>
-            
+              <div className="product-actions">
+                <i className="fas fa-trash delete-icon" onClick={() => handleDeleteProduct(product.id)}></i>
+                <i className="fas fa-edit edit-icon" onClick={() => handleEditClick(product.id)}></i>
+              </div>
               </>
             )}
           </div>
