@@ -123,3 +123,30 @@
   border-radius: 20%;
 }
 
+.planned-dish { 
+  list-style: none; 
+  padding: 0; 
+  margin: 0; 
+  display: flex; 
+  align-items: center; 
+} 
+/* .planned-dish li { 
+  flex-grow: 1; 
+} */
+.planned-dish p, .planned-dish li{
+  /* flex: 1; */
+  font-weight: bold;
+}
+
+.planned-dish i {
+  cursor: pointer;
+  font-size: 1.5em;
+  color: #c6dbe6;
+  transition: color 0.2s;
+  flex: 1;
+}
+
+.planned-dish i:hover {
+  color: #2683b5;
+}
+

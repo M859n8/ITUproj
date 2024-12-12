@@ -151,6 +151,15 @@ app.post('/plan-meal', (req, res) => {
         VALUES (?, ?, ?)
     `;
 
+    const findProductsForDishQuery = ` 
+        SELECT dp.product_id, p.amount, p.reserved_amount, dp.required_amount 
+        FROM dish_product dp JOIN products p ON dp.product_id = p.id 
+        WHERE dp.dish_id = ?; 
+    `; 
+    const updateProductReservedAmountQuery = ` 
+        UPDATE products SET reserved_amount = reserved_amount + ? WHERE id = ? 
+    `;
+
     // Перевірка, чи існує дата в таблиці `calendar`
     connection.query(findCalendarQuery, [date], (err, results) => {
         if (err) {
@@ -177,14 +186,33 @@ app.post('/plan-meal', (req, res) => {
 
     // Додаємо страву до календаря
     function addDishToCalendar(calendar_id) {
-        connection.query(insertCalendarDishQuery, [calendar_id, dish_id, meal_type], (err, results) => {
-            if (err) {
-                console.error('Error planning meal:', err);
-                return res.status(500).json({ error: 'Failed to plan meal' });
-            }
-            res.status(201).json({ message: 'Meal planned successfully' });
-        });
-    }
+        connection.query(findProductsForDishQuery, [dish_id], (err, products) => { 
+            if (err) { 
+                console.error('Error finding products for dish:', err); 
+                return res.status(500).json({ error: 'Failed to find products for dish' }); 
+            } 
+            const insufficientProducts = products.filter(product => product.amount-product.reserved_amount < product.required_amount); 
+            if (insufficientProducts.length > 0) { 
+                return res.status(400).json({ error: 'Not enough products available', insufficientProducts }); 
+            } else { 
+                products.forEach(product => { 
+                    connection.query(updateProductReservedAmountQuery, [product.required_amount, product.product_id], (err, results) => { 
+                        if (err) { 
+                            console.error('Error updating product reserved amount:', err); 
+                            return res.status(500).json({ error: 'Failed to update product reserved amount' }); 
+                        } 
+                    }); 
+                });
+            
+                connection.query(insertCalendarDishQuery, [calendar_id, dish_id, meal_type], (err, results) => { 
+                    if (err) { console.error('Error planning meal:', err); 
+                        return res.status(500).json({ error: 'Failed to plan meal' }); 
+                    } 
+                    res.status(201).json({ message: 'Meal planned successfully' }); 
+                }); 
+            } 
+        }); 
+    } 
 });
 
 
@@ -229,15 +257,32 @@ app.delete('/delete-planned-dish/:dishId', (req, res) => {
         error: 'Dish ID, date, and meal type are required for deletion.',
       });
     }
+
+    const findDishProductsQuery = ` 
+        SELECT product_id, required_amount 
+        FROM dish_product WHERE dish_id = ? 
+    `; 
+    const updateProductReservedAmountQuery = ` 
+        UPDATE products 
+        SET reserved_amount = reserved_amount - ? 
+        WHERE id = ? 
+    `;
   
-    const query = `
+    const deletePlannedDishQuery = `
       DELETE FROM calendar_dishes
       USING calendar_dishes
       INNER JOIN calendar ON calendar.id = calendar_dishes.calendar_id
       WHERE calendar.date = ? AND calendar_dishes.meal_type = ? AND calendar_dishes.dish_id = ?;
     `;
+
+    // Спочатку знайдемо відповідні записи в таблиці dish_products 
+    connection.query(findDishProductsQuery, [dishId], (err, products) => { 
+        if (err) { 
+            console.error('Error finding products for dish:', err); 
+            return res.status(500).json({ error: 'Failed to find products for dish.' }); 
+        }
   
-    connection.query(query, [date, meal_type, dishId], (err, results) => {
+    connection.query(deletePlannedDishQuery, [date, meal_type, dishId], (err, results) => {
       if (err) {
         console.error('Error deleting planned dish:', err);
         return res.status(500).json({ error: 'Failed to delete the dish.' });
@@ -246,10 +291,21 @@ app.delete('/delete-planned-dish/:dishId', (req, res) => {
       if (results.affectedRows === 0) {
         return res.status(404).json({ error: 'Dish not found.' });
       }
+
+      // Оновлюємо резервовану кількість продуктів 
+      products.forEach(product => { 
+        connection.query(updateProductReservedAmountQuery, [product.required_amount, product.product_id], (err, results) => { 
+            if (err) { 
+                console.error('Error updating product reserved amount:', err); 
+                return res.status(500).json({ error: 'Failed to update product reserved amount.' }); 
+            } 
+        }); 
+    });
   
       res.status(200).json({ message: 'Dish deleted successfully.' });
     });
   });
+});
   
 
 //----------------------------------------------------- Vlada------------------------------------------------------------------

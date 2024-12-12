@@ -118,10 +118,15 @@ const SingleMeal = ({selectedDate, meal_type}) => {
       {plannedDishes && plannedDishes.length > 0 ? (
         <ul>
           {plannedDishes.map((dish) => (
-            <li key={dish.id}>{dish.name}
-            <button onClick={() => handleDeleteDish(dish.id)}>Delete</button>
-            </li>
-            
+            <div className="planned-dish">
+              <p>{dish.name}</p>
+              {/* <p>Cooking time: {dish.cooking_time}</p> */}
+
+              {/* <button onClick={() => handleDeleteDish(dish.id)}>Delete</button> */}
+              <i className="fas fa-trash delete-icon" onClick={() => handleDeleteDish(dish.id)}></i>
+
+              
+            </div>
           ))}
 
         </ul>
@@ -140,10 +145,15 @@ const SingleMeal = ({selectedDate, meal_type}) => {
           {searchResults && searchResults.length > 0 && (
             <ul>
               {searchResults.map((dish) => (
+                <div className="planned-dish">
                 <li key={dish.id}>
                   {dish.name}
-                  <button onClick={() => handleAddDish(dish.id)}>Add</button>
-                </li>
+                  </li>
+                  {/* <button onClick={() => handleAddDish(dish.id)}>Add</button> */}
+                  <i className="fas fa-plus add-icon" onClick={() => handleAddDish(dish.id)}></i>
+
+                
+                </div>
               ))}
             </ul>
           )}

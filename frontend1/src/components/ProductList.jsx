@@ -106,7 +106,7 @@ const ProductList = () => {
               <>
               <h3 className="product-name">{product.name}</h3>
               <div className="product-details">
-                <p>Amount: {product.amount} {product.unit}</p>
+                <p>Amount: {product.amount} {product.unit}  (reserved for Meal Plan: {product.reserved_amount})</p>
                 <p>Price: {product.price}$</p>
                 <p>Lactose Free: {product.lactose_free ? 'Yes' : 'No'}</p>
                 <p>Gluten Free: {product.gluten_free ? 'Yes' : 'No'}</p>
