@@ -6,12 +6,54 @@
   .parent {
     position: relative;
   }
+
+  /*           button transition           */
   .addButton {
-    background-color: white;
-    font-size: 20px;
-    border-color: white;
-    cursor: pointer; /* Курсор у вигляді руки для кнопки */
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    border: none;
+    background-color: #c6dbe6;
+    color: white;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
   }
+  
+  /* Додаємо плюсик */
+  .addButton::before,
+  .addButton::after {
+    content: '';
+    position: absolute;
+    background-color: white;
+    transition: transform 0.3s;
+  }
+  
+  /* Горизонтальна лінія */
+  .addButton::before {
+    width: 20px;
+    height: 3px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  /* Вертикальна лінія */
+  .addButton::after {
+    width: 3px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  /* Змінюємо на хрестик, коли кнопка активна */
+  .addButton.active::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+  
+  
+
   .show-form {
     position: absolute;
     top: 60px;
@@ -28,11 +70,16 @@
     display: flex;
     flex-direction: column;
     gap: 20px; /*between elements*/
+    
+    border-radius: 20px;
     /* Плавний перехід/ modify */
-    opacity: 1;
+    /* opacity: 1;
     visibility: visible;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition: opacity 0.3s ease, visibility 0.3s ease; */
   }
+
+  /*                search section               */
+
   .search-box{
     margin: 3vh auto;
     width: 80%;
@@ -44,7 +91,8 @@
     border: 1px solid #ccc;
     border-radius: 5px;
   }
-  
+
+  /*              product list section            */
   .product-list {
     background-color: white;
     display: flex;
@@ -101,13 +149,6 @@
     font-size: 1.2em;
   }
 
-  /* .product-details-edit {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-
-  } */
   .product-details label{
     font-size: 16px;
   }
@@ -201,4 +242,6 @@
   .product-details p {
     margin: 0;
   }
+
+
   

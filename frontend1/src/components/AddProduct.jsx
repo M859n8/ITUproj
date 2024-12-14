@@ -43,8 +43,8 @@ function AddProduct() {
     event.preventDefault(); //prevents the default form submission
 
     //check mandatory data
-    const { name, amount, unit, price } = product;
-    if (!name || !amount || !unit || !price) {
+    const { name, amount} = product;
+    if (!name || !amount ) {
       alert('Please fill in all required fields');
       return;
     }
@@ -52,8 +52,8 @@ function AddProduct() {
       await axios.post('http://localhost:5000/add-product', {
         ...product,
         amount: parseInt(product.amount),
-        price: parseFloat(product.price),
-        
+        price: parseFloat(product.price) || null,
+        unit : product.unit || null ,
         expiration_date: product.expiration_date || null
       });
       setShowForm(false); //close form
@@ -78,7 +78,11 @@ function AddProduct() {
     <div className="parent">
       <div className="section-header">
         <h2>YOUR PRODUCTS</h2>
-        <button onClick={handleAddProductClick} className="addButton">+</button>
+        {/* <button onClick={handleAddProductClick} className="addButton">+</button> */}
+        <button 
+    onClick={handleAddProductClick} 
+    className={`addButton ${showForm ? 'active' : ''}`}
+  />
       </div>
       {showForm && (
         <form onSubmit={handleAddItem} >
@@ -89,14 +93,16 @@ function AddProduct() {
               name="name"
               value={product.name}
               onChange={handleChange}
-              placeholder="Enter name"
+              placeholder="Enter name *"
+              required
             />
             <input
               type="number"
               name="amount"
               value={product.amount}
               onChange={handleChange}
-              placeholder="Enter amount"
+              placeholder="Enter amount *"
+              required
             />
             <select
               name="unit"
@@ -107,7 +113,6 @@ function AddProduct() {
               <option value="kg">kg</option>
               <option value="liter">liter</option>
               <option value="piece">piece</option>
-              <option value="-">-</option>
             </select>
             <input
               type="number"

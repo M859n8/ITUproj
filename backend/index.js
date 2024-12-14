@@ -8,7 +8,8 @@ const PORT = 5000;
 app.use(cors());
 app.use(express.json()); 
 
-//----------------------------------------------------- Maryna------------------------------------------------------------------
+//----------------------------------------------- Maryna Kucher-----------------------------------------------------//
+  //-------------------------product-----------------------------//
 
 app.post('/add-product', (req, res) => {
     const { 
@@ -22,9 +23,9 @@ app.post('/add-product', (req, res) => {
 
     const values = [
         name,
-        amount,
-        unit,
-        price,
+        amount || 0,
+        unit || null,
+        price || null,
         lactose_free,
         gluten_free,
         vegan,
@@ -75,10 +76,10 @@ app.get('/get-all-product', (req, res) => {
 });
 
 app.delete('/delete-product/:productId', (req, res) => {
-    const { productId } = req.params; // Отримуємо ID через params
+    const { productId } = req.params; 
     
     if (!productId) {
-        return res.status(400).send('Please provide a valid product ID');
+        return res.status(400).send('Please provide a product ID');
     }
   
     const query = `
@@ -136,7 +137,7 @@ app.put('/update-product/:productId', (req, res) => {
   //-------------------------calendar-----------------------------//
 
 
-// Планування страви на конкретний день
+//plan meal for a selected date
 app.post('/plan-meal', (req, res) => {
     const { date, dish_id, meal_type } = req.body;
 
@@ -160,7 +161,6 @@ app.post('/plan-meal', (req, res) => {
         UPDATE products SET reserved_amount = reserved_amount + ? WHERE id = ? 
     `;
 
-    // Перевірка, чи існує дата в таблиці `calendar`
     connection.query(findCalendarQuery, [date], (err, results) => {
         if (err) {
             console.error('Error finding calendar date:', err);
@@ -168,11 +168,11 @@ app.post('/plan-meal', (req, res) => {
         }
 
         if (results.length > 0) {
-            // Якщо дата існує, беремо `id`
+            //get id of the date, if it exists in table
             const existingCalendarId = results[0].id;
             addDishToCalendar(existingCalendarId);
         } else {
-            // Якщо дати немає, додаємо її в таблицю
+            //else add date to the table
             connection.query(insertCalendarQuery, [date], (err, results) => {
                 if (err) {
                     console.error('Error inserting calendar date:', err);
@@ -184,7 +184,7 @@ app.post('/plan-meal', (req, res) => {
         }
     });
 
-    // Додаємо страву до календаря
+    
     function addDishToCalendar(calendar_id) {
         connection.query(findProductsForDishQuery, [dish_id], (err, products) => { 
             if (err) { 
@@ -217,14 +217,8 @@ app.post('/plan-meal', (req, res) => {
 
 
 app.get('/meals-for-day', (req, res) => {
-    // Отримуємо обраний день з query-параметра (наприклад, ?date=2024-12-05)
     const { date, meal_type } = req.query;
 
-
-    // console.log('Received date:', date);
-    // console.log('Received mealType:', meal_type);
-
-    // Перевіряємо, чи передано дату та тип прийому їжі
     if (!date || !meal_type) {
         return res.status(400).json({ error: 'Please provide a valid date and meal_type (breakfast, lunch, dinner).' });
     }
@@ -237,13 +231,11 @@ app.get('/meals-for-day', (req, res) => {
         WHERE calendar.date = ? AND calendar_dishes.meal_type = ?;
     `;
 
-    // Виконуємо запит до бази даних
     connection.query(query, [date, meal_type], (err, results) => {
         if (err) {
             console.error(err);
             return res.status(500).json({ error: 'An error occurred while retrieving meals.' });
         }
-        // console.log('Query Results:', results);  // Логування результатів
         res.json(results);
     });
 });
@@ -275,7 +267,6 @@ app.delete('/delete-planned-dish/:dishId', (req, res) => {
       WHERE calendar.date = ? AND calendar_dishes.meal_type = ? AND calendar_dishes.dish_id = ?;
     `;
 
-    // Спочатку знайдемо відповідні записи в таблиці dish_products 
     connection.query(findDishProductsQuery, [dishId], (err, products) => { 
         if (err) { 
             console.error('Error finding products for dish:', err); 
@@ -292,7 +283,7 @@ app.delete('/delete-planned-dish/:dishId', (req, res) => {
         return res.status(404).json({ error: 'Dish not found.' });
       }
 
-      // Оновлюємо резервовану кількість продуктів 
+      //update reserved products amount
       products.forEach(product => { 
         connection.query(updateProductReservedAmountQuery, [product.required_amount, product.product_id], (err, results) => { 
             if (err) { 

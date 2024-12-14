@@ -15,6 +15,15 @@ const ProductEdit = ({ product, handleCancelEdit }) => {
   };
 
   const handleSave = async () => {
+    //check mandatory data
+    const { name, amount} = updatedProduct;
+    if (!name ) {
+      alert('Please fill the product name');
+      return;
+    }
+    if(!amount){
+      updatedProduct.amount = 0;
+    }
     try {
       // Відправка запиту на оновлення продукту
       const response = await axios.put(`http://localhost:5000/update-product/${updatedProduct.id}`, {
@@ -42,8 +51,9 @@ const ProductEdit = ({ product, handleCancelEdit }) => {
 
   return (
     <div className="product-item-edit" >
+     
       <div className="product-name">
-        
+      
       <label>
         <input
           type="text"
@@ -51,6 +61,7 @@ const ProductEdit = ({ product, handleCancelEdit }) => {
           value={updatedProduct.name}
           onChange={handleChange}
           className="edit-input"
+          required
         />
       </label>
       </div>
@@ -123,6 +134,7 @@ const ProductEdit = ({ product, handleCancelEdit }) => {
           className="edit-input"
         />
       </label>
+      
       </div>
       <div className="product-actions-edit">
         <button onClick={handleSave}>Save</button>
