@@ -141,7 +141,7 @@ const ShoppingList = () => {
 };
 
 
-  const handleDelete = async (productName, updatedAmount) => {
+  const handleWasBought = async (productName, updatedAmount) => {
     try {
         // Пошук продукту
         const response = await axios.get('http://localhost:5000/get-product', {
@@ -190,6 +190,18 @@ const ShoppingList = () => {
     fetchDishes();
   };
 
+  const handleDelete = async (productName) => {
+    try{
+        await axios.delete('http://localhost:5000/delete-from-shopping-list', {
+            data: { name: productName }
+        });
+        fetchDishes();
+
+    } catch(error){
+        console.error(`Error deleting product from list:`, error.message);
+    }
+  }
+
   const handleUpdate = async (productName, updatedAmount) => {
     try {
         await axios.post('http://localhost:5000/update-product-from-list', {
@@ -197,14 +209,6 @@ const ShoppingList = () => {
             amount: updatedAmount,
         });
 
-        // Оновлення списку
-        // setShoppingList((prevList) =>
-        //     prevList.map((product) =>
-        //         product.name === productName
-        //             ? { ...product, amount: updatedAmount }
-        //             : product
-        //     )
-        // );
         fetchDishes();
         // Вийти з режиму редагування
         setEditingProductName(null);
@@ -225,7 +229,9 @@ const ShoppingList = () => {
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
             />
-            <button className="search-button" onClick={handleSearch}>🔍</button>
+            <button className="search-button" onClick={handleSearch}>
+                <i className="fa-solid fa-magnifying-glass"></i>
+            </button>
             <button className="add-product-button" onClick={handleModalToggle}>+ Add Product</button>
         </div>
         {error && <p style={{ color: 'red' }}>{error}</p>}
@@ -254,7 +260,7 @@ const ShoppingList = () => {
                                 onClick={() => handleUpdate(product.name, newAmount)}
                                 style={{ background: 'none', border: 'none', cursor: 'pointer' }}
                             >
-                                ✅
+                                <i className="fas fa-check"></i>
                             </button>
                         ) : (
                             <button
@@ -264,12 +270,18 @@ const ShoppingList = () => {
                                 }}
                                 style={{ background: 'none', border: 'none', cursor: 'pointer' }}
                             >
-                                ✏️
+                                <i className="fa-solid fa-pen"></i>
                             </button>
                         )}
+                    <button
+                        onClick={() => handleDelete(product.name)}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                    >
+                        <i className="fa-solid fa-trash-can"></i>
+                    </button>
                     <input
                         type="checkbox"
-                        onChange={() => handleDelete(product.name, product.amount)}
+                        onChange={() => handleWasBought(product.name, product.amount)}
                     />
                   </div>
                 </li>
@@ -281,7 +293,9 @@ const ShoppingList = () => {
         <div className="modal">
             <div className="modal-overlay" onClick={handleModalToggle}></div>
             <div className="modal-content">
-                <button className="close-button" onClick={handleModalToggle}>X</button>
+                <button className="close-button" onClick={handleModalToggle}>
+                    <i className="fa-solid fa-xmark"></i>
+                </button>
                 <div className="form-container">
                     <div className="form-section">
                         <h3>Add Existing Product</h3>

@@ -385,6 +385,145 @@ app.get('/get-dish', (req, res) => {
     });
 });
 
+app.post('/update-dish', (req, res) => {
+    const {
+        name,
+        difficulty_level,
+        cooking_time,
+        is_vegan,
+        is_gluten_free,
+        is_lactose_free,
+        originalName
+    } = req.body;
+
+    // Формуємо запит для оновлення лише переданих полів
+    const updates = [];
+    const values = [];
+
+    updates.push('name = ?');
+    values.push(name);
+
+    if (difficulty_level) {
+        updates.push('difficulty_level = ?');
+        values.push(difficulty_level);
+    }
+
+    if (cooking_time) {
+        updates.push('cooking_time = ?');
+        values.push(cooking_time);
+    }
+
+    // Завжди оновлюємо індикатори
+    updates.push('is_vegan = ?');
+    values.push(is_vegan);
+
+    updates.push('is_gluten_free = ?');
+    values.push(is_gluten_free);
+
+    updates.push('is_lactose_free = ?');
+    values.push(is_lactose_free);
+
+    // Додаємо ім'я для WHERE
+    values.push(originalName);
+
+    if (updates.length === 0) {
+        return res.status(400).send('No fields to update');
+    }
+
+    const updateQuery = `UPDATE dishes SET ${updates.join(', ')} WHERE name = ?`;
+
+    connection.query(updateQuery, values, (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Error updating dish');
+        }
+
+        if (results.affectedRows === 0) {
+            return res.status(404).send('Dish not found');
+        }
+
+        res.status(200).send('Dish updated successfully');
+    });
+});
+
+app.post('/update-dish-favorite', (req, res) => {
+    const { name, is_favorite } = req.body;
+
+    // if (!name || typeof is_favorite === 'undefined') {
+    //     return res.status(400).send('Dish name and is_favorite value are required');
+    // }
+
+    // Перевіряємо, чи існує страва
+    const getDishQuery = 'SELECT * FROM dishes WHERE name = ?';
+    connection.query(getDishQuery, [name], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Error retrieving dish');
+        }
+
+        if (results.length === 0) {
+            return res.status(404).send('Dish not found');
+        }
+
+        // Оновлюємо значення is_favorite
+        const updateQuery = 'UPDATE dishes SET is_favorite = ? WHERE name = ?';
+        connection.query(updateQuery, [is_favorite, name], (err) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('Error updating dish');
+            }
+            res.status(200).send('Dish favorite status updated');
+        });
+    });
+});
+
+app.get('/filter-dishes', (req, res) => {
+    const { filter } = req.query;
+
+    // Запит для отримання страв з фільтром
+    const dishQuery = `
+        SELECT * FROM dishes WHERE ?? = true
+    `;
+
+    connection.query(dishQuery, [filter], (err, dishResults) => {
+        if (err) {
+            return res.status(500).send('Error searching for dishes');
+        }
+
+        if (dishResults.length === 0) {
+            return res.status(404).send('No dishes found');
+        }
+
+        // Отримання інгредієнтів для кожної страви
+        const dishIds = dishResults.map(dish => dish.id);
+        const ingredientQuery = `
+            SELECT dp.dish_id, p.name AS product_name, dp.required_amount, p.unit
+            FROM dish_product dp
+            JOIN products p ON dp.product_id = p.id
+            WHERE dp.dish_id IN (?)
+        `;
+
+        connection.query(ingredientQuery, [dishIds], (err, ingredientResults) => {
+            if (err) {
+                return res.status(500).send('Error retrieving ingredients');
+            }
+
+            // Об’єднання страв з їх інгредієнтами
+            const dishesWithIngredients = dishResults.map(dish => {
+                return {
+                    ...dish,
+                    ingredients: ingredientResults.filter(ingredient => ingredient.dish_id === dish.id)
+                };
+            });
+
+            res.status(200).json(dishesWithIngredients);
+        });
+    });
+});
+
+
+
+
 app.get('/get-all-dishes', (req, res) => {
     const dishQuery = 'SELECT * FROM dishes'; // Get all dish
 
@@ -504,7 +643,7 @@ app.post('/update-product-amount', (req, res) => {
             return res.status(500).send('Error retrieving product');
         }
 
-        if (results.length > 0) {
+        if (results.length > 0) { // ЧИ РОБИТИ ПЕРЕВІРКУ НАЯВНОСТІ ПРОДУКТА ТУТ ЧИ НІ
             // Оновлюємо кількість існуючого продукту
             const existingProduct = results[0];
             const newAmount = existingProduct.amount + amount;  // додаємо до поточної кількості
@@ -516,16 +655,17 @@ app.post('/update-product-amount', (req, res) => {
                 }
                 res.status(200).send('Product quantity updated');
             });
-        } else {
-            // Якщо продукт не знайдений, створюємо новий
-            const addProductQuery = 'INSERT INTO products (name, amount) VALUES (?, ?)';
-            connection.query(addProductQuery, [name, amount], (err) => {
-                if (err) {
-                    return res.status(500).send('Error adding new product');
-                }
-                res.status(201).send('New product added');
-            });
-        }
+        } 
+        // else {
+        //     // Якщо продукт не знайдений, створюємо новий
+        //     const addProductQuery = 'INSERT INTO products (name, amount) VALUES (?, ?)';
+        //     connection.query(addProductQuery, [name, amount], (err) => {
+        //         if (err) {
+        //             return res.status(500).send('Error adding new product');
+        //         }
+        //         res.status(201).send('New product added');
+        //     });
+        // }
     });
 });
 
