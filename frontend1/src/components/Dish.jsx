@@ -6,9 +6,10 @@ const Dish = () => {
     // SEARCH
     const [searchQuery, setSearchQuery] = useState('');
     const [dishes, setDishes] = useState([]);
-    const [error, setError] = useState('');
+    // ERRORS
+    const [errorSearch, setErrorSearch] = useState('');
+    const [errorUpdate, setErrorUpdate] = useState('');
     // SHOW
-    // const [dishes, setDishes] = useState([]);
     const [isFormOpen, setIsFormOpen] = useState(false);
     // FORM
     const [dishName, setDishName] = useState('');
@@ -20,7 +21,29 @@ const Dish = () => {
     const [ingredients, setIngredients] = useState([]);
     const [searchProduct, setSearchProduct] = useState('');
     const [foundProducts, setFoundProducts] = useState([]);
+    // EDIT
+    const [editingProductName, setEditingProductName] = useState(null);
+    const [editDish, setEditDish] = useState({
+        name: '',
+        difficulty_level: 'easy',
+        cooking_time: '',
+        is_vegan: false,
+        is_gluten_free: false,
+        is_lactose_free: false,
+    });
+    // FILTER
+    const [selectedFilter, setSelectedFilter] = useState('');
+    
+    // const handleFilterChange = (event) => {
+    //     const { value, checked } = event.target;
+    //     setSelectedFilters((prev) =>
+    //         checked ? [...prev, value] : prev.filter((filter) => filter !== value)
+    //     );
+    // };
 
+    const handleEditValue = (field, value) => {
+        setEditDish(prev => ({ ...prev, [field]: value }));
+    };
     const toggleForm = () => {
         setIsFormOpen(!isFormOpen);
     };
@@ -49,21 +72,73 @@ const Dish = () => {
             await axios.delete(`http://localhost:5000/delete-dish/${id}`);
             // Show all dishes except for the deleted one
             setDishes(dishes.filter(dish => dish.id !== id));
+            // fetchDishes(); Може замінити на це?
         } catch (error) {
             console.error('Error deleting the dish:', error);
         }
     };
 
+    const handleUpdateFavorite = async (dishName,isFavorite) => {
+        // console.log('You here');
+        try {
+            await axios.post('http://localhost:5000/update-dish-favorite', {
+                name: dishName,
+                is_favorite: isFavorite, // true або false
+            });
+            // console.error('You here!');
+            fetchDishes();
+        } catch (error) {
+            console.error('Error deleting the dish:', error);
+        }
+        // setIsFavorite(false);
+
+    };
+
+    const handleUpdate = async () => {
+        if (!editDish.name) {
+            setErrorUpdate('This field is required.');
+            return;
+        }
+        try {
+            await axios.post('http://localhost:5000/update-dish', {
+                ...editDish, // Нові дані страви
+                originalName: editingProductName // Передаємо старе ім'я
+            });
+            fetchDishes();
+        } catch (error) {
+            console.error('Error updating the product:', error);
+        }
+        setEditDish({
+            name: '',
+            difficulty_level: '',
+            cooking_time: '',
+            is_vegan: false,
+            is_gluten_free: false,
+            is_lactose_free: false,
+        });
+        setEditingProductName(null);
+    };
+
     const handleSearch = async () => {
         // fetchDishes(true); // clear all product
         try {
-            setError('');
-            const response = await axios.get(`http://localhost:5000/get-dish`, {
-                params: { name: searchQuery }
-            });
+            setErrorSearch('');
+            let response;
+            if (selectedFilter) {
+                // Якщо обрані фільтри, використовуємо `/filter-dishes`
+                response = await axios.get(`http://localhost:5000/filter-dishes`, {
+                    params: { filter: selectedFilter }
+                });
+            } else {
+                // Інакше виконуємо пошук за назвою через `/get-dish`
+                response = await axios.get(`http://localhost:5000/get-dish`, {
+                    params: { name: searchQuery }
+                });
+            }
             setDishes(response.data); 
+            setSelectedFilter('');
         } catch (err) {
-            setError('Error finding the dish or no dishes found');
+            setErrorSearch('Error finding the dish or no dishes found');
             setDishes([]);
         }
     };
@@ -124,29 +199,143 @@ const Dish = () => {
         <div className="dish-container">
             <h2>Dishes</h2>
             <div className="search-bar">
+            {/* <div className="filter-container"> */}
+                <select
+                    value={selectedFilter}
+                    onChange={(e) => setSelectedFilter(e.target.value)}
+                    className="filter-select"
+                >
+                    <option value="">No Filter</option>
+                    <option value="is_favorite">Favorite</option>
+                    <option value="is_vegan">Vegan</option>
+                    <option value="is_lactose_free">Lactose-Free</option>
+                    <option value="is_gluten_free">Gluten-Free</option>
+                </select>
+            {/* </div> */}
                 <input
                     type="text"
                     placeholder="Enter dish name"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <button className="search-button" onClick={handleSearch}>🔍</button>
+                <button className="search-button" onClick={handleSearch}>
+                    <i className="fa-solid fa-magnifying-glass"></i>
+                </button>
                 <button className="add-button" onClick={toggleForm}>+Add dish</button>
             </div>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {errorSearch && <p style={{ color: 'red' }}>{errorSearch}</p>}
 
 
             <div className="dish-results">
                 {dishes.map((dish) => (
                     <div key={dish.id} className="dish-card">
-                        <button className="delete-button" onClick={() => handleDelete(dish.id)}>🗑️</button>
+                        {editingProductName === dish.name ? (
+                            <>
+                                <div className="button-group">
+                                    <button className="confirm-button" onClick={handleUpdate}>
+                                        <i className="fas fa-check"></i>
+                                    </button>
+                                    <button className="close-Button" onClick={() => {
+                                            setEditingProductName(null);
+                                            setErrorUpdate('');
+
+                                        }}>
+                                        <i className="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+                                <div className="nameUpd">
+                                <input
+                                    type="text"
+                                    className="edit-field"
+                                    name="name"
+                                    value={editDish.name}
+                                    onChange={(e) => handleEditValue('name', e.target.value)}
+                                    placeholder="Enter dish name"
+                                />
+                                </div>
+                                {errorUpdate && <p style={{ color: 'red' }}>{errorUpdate}</p>}
+                                <p>
+                                    Difficulty: 
+                                    <select
+                                        className="edit-field"
+                                        name="difficulty_level"
+                                        value={editDish.difficulty_level}
+                                        onChange={(e) => handleEditValue('difficulty_level', e.target.value)}
+                                    >
+                                        <option value="easy">Easy</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="hard">Hard</option>
+                                    </select>
+                                </p>
+                                <p>
+                                    Cooking time: 
+                                    <input
+                                        type="text"
+                                        className="edit-field"
+                                        name="cooking_time"
+                                        value={editDish.cooking_time}
+                                        onChange={(e) => handleEditValue('cooking_time', e.target.value)}
+                                        placeholder="Enter cooking time(e.g. 10 min, 1 hour etc.)"
+                                    />
+                                </p>
+                                <div className="indicators">
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            name="is_vegan"
+                                            checked={editDish.is_vegan}
+                                            onChange={(e) => handleEditValue('is_vegan', e.target.value)}
+                                        />
+                                        Vegan
+                                    </label>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            name="is_gluten_free"
+                                            checked={editDish.is_gluten_free}
+                                            onChange={(e) => handleEditValue('is_gluten_free', e.target.value)}
+                                        />
+                                        Gluten-free
+                                    </label>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            name="is_lactose_free"
+                                            checked={editDish.is_lactose_free}
+                                            onChange={(e) => handleEditValue('is_lactose_free', e.target.value)}
+                                        />
+                                        Lactose-free
+                                    </label>
+                                </div>
+                            </>
+                        ) : (
+                        <>
+                        {dish.is_favorite === 1 ? (
+                            <button className="favorite-button" onClick={() => handleUpdateFavorite(dish.name, false)}>
+                                <i className="fa-solid fa-heart"></i>
+                            </button>
+                        ) : (
+                            <button className="favorite-button" onClick={() => handleUpdateFavorite(dish.name, true)}>
+                                <i className="fa-regular fa-heart"></i>
+                            </button>
+                        )}
+                        <div className="button-group">
+                            <button className="update-button" onClick={() => {
+                                    setEditingProductName(dish.name);
+                                }}>
+                                <i className="fa-solid fa-pen"></i>
+                            </button>
+                            <button className="delete-button" onClick={() => handleDelete(dish.id)}>
+                                <i className="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
                         <h3>{dish.name}</h3>
                         <p>Difficulty: {dish.difficulty_level}</p>
                         <p>Cooking time: {dish.cooking_time}</p>
                         <div className="indicators">
-                            {dish.is_lactose_free && <span>Lactose-free</span>}
-                            {dish.is_gluten_free && <span>Gluten-free</span>}
-                            {dish.is_vegan && <span>Vegan</span>}
+                            {(dish.is_lactose_free==1) && <span>Lactose-free</span>}
+                            {(dish.is_gluten_free==1) && <span>Gluten-free</span>}
+                            {(dish.is_vegan==1) && <span>Vegan</span>}
                         </div>
                         <p>Ingredients:</p>
                         <ul>
@@ -154,6 +343,8 @@ const Dish = () => {
                                 <li key={i}>{ingredient.product_name} ({ingredient.required_amount} {ingredient.unit})</li>
                             ))}
                         </ul>
+                        </>
+                      )}
                     </div>
                 ))}
             </div>
