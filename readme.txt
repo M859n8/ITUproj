@@ -9,7 +9,7 @@ seznam produktů, seznam nákupů, seznam jídel).
 
 Dále ve složce „components“ se nacházejí zdrojové kódy pro jednotlivé části aplikace.
 
-Kalendář a seznam produktů realizovala Kucher Maryna.
+Kalendář a seznam produktů realizovala Kucher Maryna (xkuche01).
 Do této části patří následující zdrojové kódy:
     ProductContext.jsx – funkce pro aktualizaci seznamu produktů
     ProductList.jsx – sekce produktů, vyhledávání produktů
@@ -20,7 +20,7 @@ Do této části patří následující zdrojové kódy:
     MealCalendar.css – styly pro sekci kalendáře
     SingleMeal.jsx – vyhledávání pro každé jídlo a zobrazení naplánovaných pokrmů
 
-Vladislava Bilyk implementovala seznam nákupů a sekci jídel.
+Vladyslava Bilyk(xbilyk03) implementovala seznam nákupů a sekci jídel.
 Do této části patří následující zdrojové kódy:
     Dish.jsx – sekce jídel 
     Dish.css - styly pro sekce jídel

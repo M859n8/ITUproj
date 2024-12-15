@@ -125,7 +125,7 @@ const SingleMeal = ({selectedDate, meal_type}) => {
       }
     
     } catch (error) {
-      console.error('Error planning meal', error);
+      // console.error('Error planning meal', error);
       setError('Failed to plan meal');
     }
   };
@@ -202,7 +202,7 @@ const SingleMeal = ({selectedDate, meal_type}) => {
         <ul>
           {plannedDishes.map((dish) => (
 
-            <div className="planned-dish">
+            <div className="planned-dish" key={dish.id}>
 
               <p>{dish.name}</p>
               {/* delete button  */}
