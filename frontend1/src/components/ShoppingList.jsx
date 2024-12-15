@@ -182,7 +182,7 @@ const ShoppingList = () => {
             try {
                 // Get data about product from table Shopping list that was bought
                 const response1 = await axios.get(`http://localhost:5000/get-product-from-list/${productName}`);
-                const productFromList = response1.data;
+                const productFromList = response1.data[0];
                 // Change datetime to date
                 const expirationDate = productFromList.expiration_date
                 ? new Date(productFromList.expiration_date).toISOString().split('T')[0]
@@ -191,13 +191,14 @@ const ShoppingList = () => {
                 await axios.post('http://localhost:5000/add-product', {
                     name: productFromList.name,
                     amount: productFromList.amount,
-                    unit: productFromList.unit || null,
-                    price: productFromList.price || null,
+                    unit: productFromList.unit,
+                    price: productFromList.price,
                     lactose_free: productFromList.lactose_free,
                     gluten_free: productFromList.gluten_free,
                     vegan: productFromList.vegan,
-                    expiration_date: expirationDate || null
+                    expiration_date: expirationDate
                 });
+                console.log("Added");
             } catch (err) {
                 console.error(`Error processing product getting or adding product:`, err.message);
             }

@@ -16,6 +16,7 @@ app.post('/add-product', (req, res) => {
         name, amount, unit, price, lactose_free, gluten_free, 
         vegan, expiration_date } = req.body;
 
+
     const query = `
         INSERT INTO products (name, amount, unit, price, lactose_free, gluten_free, vegan, expiration_date) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
