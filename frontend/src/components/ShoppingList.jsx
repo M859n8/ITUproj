@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './ShoppingList.css';
+import { useProducts } from './ProductContext.jsx';
+
 
 const ShoppingList = () => {
+    const { fetchProducts } = useProducts();
     const [editingProductName, setEditingProductName] = useState(null); // Продукт, який редагується
     const [newAmount, setNewAmount] = useState(''); // Нове значення кількості
     const [searchQuery, setSearchQuery] = useState('');
@@ -175,7 +178,7 @@ const ShoppingList = () => {
                     vegan: productFromList.vegan,
                     expiration_date: expirationDate
                 });
-        
+                fetchProducts();
                 console.log(`Product "${productName}" moved from shopping list to products table.`);
             } catch (listError) {
                 console.error(`Error processing product "${productName}":`, listError.message);

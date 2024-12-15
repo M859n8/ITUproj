@@ -2,7 +2,7 @@
     Login : xkuche01      */
 import React, {useState} from 'react';
 import { useProducts } from './ProductContext.jsx';
-import ProductEdit from './ProductEdit';
+import ProductEdit from './ProductEdit.jsx';
 import { format } from 'date-fns';
 import './ProductList.css';
 import axios from "axios";
