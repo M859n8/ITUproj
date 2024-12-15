@@ -1,14 +1,19 @@
-/* .search-dish-container {
-    text-align: center;
-    margin-top: 20px;
-} */
-/* Top bar */
-/* .search-bar {
+/*------------------SEARCH BAR----------------*/
+.search-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
     gap: 5px; 
+}
+
+.filter-select {
+    width: 200px; 
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
 }
 
 .search-bar input {
@@ -19,97 +24,68 @@
     border-radius: 5px; 
     outline: none;
     box-sizing: border-box;
-} */
-.search-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    gap: 5px; /* Відстань між елементами */
-}
-
-/* .filter-container {
-    display: flex;
-    align-items: center;
-} */
-
-.filter-select {
-    width: 200px; /* Ширина селекту */
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-    /* margin-right: 10px; */
-}
-
-.search-bar input {
-    flex: 1; /* Займає всю доступну ширину */
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc; /* Світло-сірий ободок */
-    border-radius: 5px; /* Невелике закруглення */
-    outline: none;
-    box-sizing: border-box;
 }
 
 .search-button {
-    background-color: #2683b5; /* Синій колір */
-    color: #fff; /* Білий текст */
+    background-color: #2683b5; 
+    color: #fff; 
     border: none;
-    border-radius: 5px; /* Гострі краї */
+    border-radius: 5px; 
     padding: 10px 20px;
-    /* font-size: 16px; */
     cursor: pointer;
-    height: 100%; /* Вирівнювання висоти з полем вводу */
+    height: 100%; /* Height alignment with the input field */
 }
 
 .search-button:hover {
-    background-color: #1d6a92; /* Темніший синій при наведенні */
+    background-color: #1d6a92; 
 }
 
 .add-button {
-    background-color: #2683b5; /* Синій колір */
-    color: #fff; /* Білий текст */
+    background-color: #2683b5; 
+    color: #fff; 
     border: none;
-    border-radius: 20px; /* Більш заокруглені краї */
+    border-radius: 20px;
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
-    height: 100%; /* Вирівнювання висоти з кнопкою Search */
+    height: 100%; /* Height alignment with the input field */
   }
 
   .add-button:hover {
-    background-color: #1d6a92; /* Темніший синій при наведенні */
+    background-color: #1d6a92; 
   }
 
-  /* PRODUCT BAR */
+  /*------------------DISH LIST----------------*/
+  /*  All field  */
   .dish-results {
     display: flex;
-    flex-wrap: wrap; /* Дозволяє переносити картки на новий рядок */
-    justify-content: flex-start; /* Вирівнює картки зліва */
-    gap: 20px; /* Відстань між картками */
+    flex-wrap: wrap; /* Allows you to move cards to a new line */
+    justify-content: flex-start; 
+    gap: 20px; 
 }
 
+/* One card */
 .dish-card {
     background-color: white;
     border: 1px solid black;
     border-radius: 10px;
     padding: 15px;
-    width: 300px; /* Фіксована ширина для однакових карток */
+    width: 300px; 
     position: relative;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Додає легку тінь */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
 }
 
+/*  Name of dish and input field for name in updating mode */
 .dish-card h3,
-.nameUpd{
-    text-align: center; /* Вирівнювання по центру */
+.nameUpd{ 
+    text-align: center; 
     font-size: 20px;
     margin-bottom: 10px;
 }
 .nameUpd{
     width: 60px;
 }
+
 .dish-card .edit-field {
     display: inline-block;
     margin-left: 5px;
@@ -120,16 +96,15 @@
     box-sizing: border-box;
 }
 
-
-/* Індикатори */
 .dish-card .indicators {
-    display: flex; /* Розташування в рядку */
-    justify-content: flex-start; /* Початок рядка */
-    gap: 10px; /* Відстань між індикаторами */
-    font-size: 14px; /* Зменшений шрифт */
-    font-style: italic; /* Косий текст */
-    color: #555; /* Темно-сірий текст */
+    display: flex; 
+    justify-content: flex-start; 
+    gap: 10px; 
+    font-size: 14px; 
+    font-style: italic; 
+    color: #555; 
 }
+
 .dish-card .indicators label {
     display: flex;
     align-items: center;
@@ -137,7 +112,7 @@
 }
 
 
-   .favorite-button {
+.favorite-button {
     position: absolute;
     top: 10px;
     left: 10px;
@@ -145,14 +120,14 @@
     border: none;
     font-size: 18px;
     cursor: pointer;
-  }
+}
 
-  .button-group {
+.button-group {
     position: absolute;
     top: 10px;
     right: 10px;
     display: flex;
-    gap: 10px; /* Відступ між кнопками */
+    gap: 10px; 
 }
 
 .update-button,
@@ -165,10 +140,9 @@
     cursor: pointer;
 }
 
-
-
-  /* FORM */
-  .modal {
+/*------------------HIDDEN FORM----------------*/
+/* Fill all window size for form */
+.modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -179,11 +153,11 @@
     justify-content: center;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 1000;
-    padding: 20px; /* Відступи для кращої видимості форми */
-    overflow-y: auto; /* Додаємо скрол, якщо вікно замале для контенту */
+    padding: 20px; 
+    overflow-y: auto; /* Add a scroll if the window is too small for the content */
 }
 
-  .form-container h2 {
+.form-container h2 {
     margin-bottom: 10px;
 }
 
@@ -212,13 +186,13 @@
     max-height: 80%;
     background: white;
     border-radius: 10px;
-    padding: 20px 30px; /* Відступи всередині */
+    padding: 20px 30px; 
     z-index: 1100;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     display: flex;
-    flex-direction: column; /* Дозволяє вертикальне вирівнювання */
-    justify-content: space-between; /* Залишає простір для кнопок знизу */
-    overflow: hidden; /* Приховує надлишок */
+    flex-direction: column; 
+    justify-content: space-between; 
+    overflow: hidden; 
 }
 
 .form-container {

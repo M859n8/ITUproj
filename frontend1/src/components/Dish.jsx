@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Dish.css'; 
 
+// Representation of Dish section
 const Dish = () => {
-    // SEARCH
+    // Search result
     const [searchQuery, setSearchQuery] = useState('');
+    // Array of all dishes
     const [dishes, setDishes] = useState([]);
-    // ERRORS
+    // Errors
     const [errorSearch, setErrorSearch] = useState('');
-    const [errorUpdate, setErrorUpdate] = useState('');
-    // SHOW
+    //  Variable that save form state - open or close
     const [isFormOpen, setIsFormOpen] = useState(false);
     // FORM
     const [dishName, setDishName] = useState('');
@@ -18,11 +19,16 @@ const Dish = () => {
     const [isVegan, setIsVegan] = useState(false);
     const [isGlutenFree, setIsGlutenFree] = useState(false);
     const [isLactoseFree, setIsLactoseFree] = useState(false);
+    // Array of product ingredient for new dish
     const [ingredients, setIngredients] = useState([]);
+    // Search product in form for ingredient
     const [searchProduct, setSearchProduct] = useState('');
+    // Array of product that was found for ingredient
     const [foundProducts, setFoundProducts] = useState([]);
     // EDIT
-    const [editingProductName, setEditingProductName] = useState(null);
+    // Dish name that user want to update
+    const [editingDishName, setEditingDishName] = useState(null);
+    // New value for update
     const [editDish, setEditDish] = useState({
         name: '',
         difficulty_level: 'easy',
@@ -33,17 +39,13 @@ const Dish = () => {
     });
     // FILTER
     const [selectedFilter, setSelectedFilter] = useState('');
-    
-    // const handleFilterChange = (event) => {
-    //     const { value, checked } = event.target;
-    //     setSelectedFilters((prev) =>
-    //         checked ? [...prev, value] : prev.filter((filter) => filter !== value)
-    //     );
-    // };
 
+    // Function that fill variable 'editDish' with new value for updating
     const handleEditValue = (field, value) => {
         setEditDish(prev => ({ ...prev, [field]: value }));
     };
+
+    // Open and close form function
     const toggleForm = () => {
         setIsFormOpen(!isFormOpen);
     };
@@ -54,9 +56,8 @@ const Dish = () => {
             const response = await axios.get('http://localhost:5000/get-all-dishes');
             if (Array.isArray(response.data)) {
                 setDishes(response.data);
-            } else {
-                console.error('Expected an array, but received:', response.data);
-                setDishes([]); // Set empty array in case of unexpected response
+            } else { // If there no dish in table Dish
+                setDishes([]);
             }
         } catch (error) {
             console.error('Error fetching dishes:', error);
@@ -67,47 +68,41 @@ const Dish = () => {
         fetchDishes(); // Retrieve dishes when the component loads
     }, []);
 
+    // Function that handle deleting dish from table Dish
     const handleDelete = async (id) => {
         try {
             await axios.delete(`http://localhost:5000/delete-dish/${id}`);
-            // Show all dishes except for the deleted one
-            setDishes(dishes.filter(dish => dish.id !== id));
-            // fetchDishes(); Може замінити на це?
+            fetchDishes(); // Refresh list of dishes
         } catch (error) {
             console.error('Error deleting the dish:', error);
         }
     };
 
+    // Function that handle updating only attribute 'is_favorite' in table Dish
     const handleUpdateFavorite = async (dishName,isFavorite) => {
-        // console.log('You here');
         try {
             await axios.post('http://localhost:5000/update-dish-favorite', {
                 name: dishName,
-                is_favorite: isFavorite, // true або false
+                is_favorite: isFavorite,
             });
-            // console.error('You here!');
-            fetchDishes();
+            fetchDishes(); // Refresh list of dishes with new information
         } catch (error) {
-            console.error('Error deleting the dish:', error);
+            console.error('Error updating attribute is_favorite:', error);
         }
-        // setIsFavorite(false);
-
     };
 
+    // Function that handle updating the dish
     const handleUpdate = async () => {
-        if (!editDish.name) {
-            setErrorUpdate('This field is required.');
-            return;
-        }
         try {
             await axios.post('http://localhost:5000/update-dish', {
-                ...editDish, // Нові дані страви
-                originalName: editingProductName // Передаємо старе ім'я
+                ...editDish, // new data for dish
+                originalName: editingDishName // old name of dish
             });
-            fetchDishes();
+            fetchDishes(); // Refresh list of dish with new information
         } catch (error) {
             console.error('Error updating the product:', error);
         }
+        // Clear variable for next updating
         setEditDish({
             name: '',
             difficulty_level: '',
@@ -116,47 +111,52 @@ const Dish = () => {
             is_gluten_free: false,
             is_lactose_free: false,
         });
-        setEditingProductName(null);
+        setEditingDishName(null);
     };
 
+    // Function that handle search and filter dishes
     const handleSearch = async () => {
-        // fetchDishes(true); // clear all product
         try {
             setErrorSearch('');
             let response;
             if (selectedFilter) {
-                // Якщо обрані фільтри, використовуємо `/filter-dishes`
+                // If filters are selected, use /filter-dishes
                 response = await axios.get(`http://localhost:5000/filter-dishes`, {
                     params: { filter: selectedFilter }
                 });
-            } else {
-                // Інакше виконуємо пошук за назвою через `/get-dish`
+            } else { // If filter not selected - user want to search for dish
                 response = await axios.get(`http://localhost:5000/get-dish`, {
                     params: { name: searchQuery }
                 });
             }
+            // Show dishes, that were found
             setDishes(response.data); 
-            setSelectedFilter('');
+            setSelectedFilter(''); // clear filter
         } catch (err) {
+            // Show error message to the user
             setErrorSearch('Error finding the dish or no dishes found');
             setDishes([]);
         }
     };
-    // FORM
+
+    // -----------------------------------------FORM------------------------------------
+    // Function that handle searching product in the form
     const handleIngredientSearch = async () => {
         try {
             const response = await axios.get(`http://localhost:5000/get-product?name=${searchProduct}`);
-            setFoundProducts(response.data);
+            setFoundProducts(response.data); // Show found products to the user
         } catch (error) {
             console.error('Error searching for products:', error); 
         }
     };
 
+    // Function that handle adding product to ingredient list of dish
     const handleAddIngredient = async (productId, productName, requiredAmount) => {
         try {
             const response = await axios.get(`http://localhost:5000/get-product?name=${productName}`);
             const product = response.data[0];
-            if (product) {
+            if (product) { // If product exist in table Product
+                // Fill variable 'ingredients' with new product information
                 setIngredients([...ingredients, { 
                     productId, 
                     productName: product.name, 
@@ -164,16 +164,18 @@ const Dish = () => {
                     requiredAmount 
                 }]);
                 setFoundProducts([]); // Clean found products
-                setSearchProduct(''); // Clear searching field
+                setSearchProduct(''); // Clean searching product
             }
         } catch (error) {
-            console.error('Error searching for products:', error); 
+            console.error('Error getting the product:', error); 
         }
     };
+
+    // Function that handle adding new dish to the table Dish
     const handleSubmit = async (event) => {
-        event.preventDefault();
+        event.preventDefault(); // Overrides the form's default behavior
         try {
-            const response = await axios.post('http://localhost:5000/add-dish', {
+            await axios.post('http://localhost:5000/add-dish', {
                 name: dishName,
                 difficulty_level: difficultyLevel,
                 cooking_time: cookingTime,
@@ -183,6 +185,7 @@ const Dish = () => {
                 ingredients,
             });
             toggleForm(); // Close the form
+            // Clear all variables for form
             setDishName('');
             setDifficultyLevel('');
             setCookingTime('');
@@ -192,14 +195,15 @@ const Dish = () => {
             setIngredients([]);
             fetchDishes(); // Refresh the list of dishes
         } catch (error) {
-            console.error('Error creating dish:', error);
+            console.error('Error adding the dish:', error);
         }
     };
+
     return (
         <div className="dish-container">
             <h2>Dishes</h2>
+            {/*            SEARCH BAR         */}
             <div className="search-bar">
-            {/* <div className="filter-container"> */}
                 <select
                     value={selectedFilter}
                     onChange={(e) => setSelectedFilter(e.target.value)}
@@ -211,7 +215,6 @@ const Dish = () => {
                     <option value="is_lactose_free">Lactose-Free</option>
                     <option value="is_gluten_free">Gluten-Free</option>
                 </select>
-            {/* </div> */}
                 <input
                     type="text"
                     placeholder="Enter dish name"
@@ -226,17 +229,19 @@ const Dish = () => {
             {errorSearch && <p style={{ color: 'red' }}>{errorSearch}</p>}
 
 
+            {/*            LIST OF DISHES        */}
             <div className="dish-results">
                 {dishes.map((dish) => (
                     <div key={dish.id} className="dish-card">
-                        {editingProductName === dish.name ? (
+                        {editingDishName === dish.name ? (
                             <>
+                            {/*          FORM FOR UPDATING            */}
                                 <div className="button-group">
                                     <button className="confirm-button" onClick={handleUpdate}>
                                         <i className="fas fa-check"></i>
                                     </button>
                                     <button className="close-Button" onClick={() => {
-                                            setEditingProductName(null);
+                                            setEditingDishName(null);
                                             setErrorUpdate('');
 
                                         }}>
@@ -253,7 +258,6 @@ const Dish = () => {
                                     placeholder="Enter dish name"
                                 />
                                 </div>
-                                {errorUpdate && <p style={{ color: 'red' }}>{errorUpdate}</p>}
                                 <p>
                                     Difficulty: 
                                     <select
@@ -275,7 +279,7 @@ const Dish = () => {
                                         name="cooking_time"
                                         value={editDish.cooking_time}
                                         onChange={(e) => handleEditValue('cooking_time', e.target.value)}
-                                        placeholder="Enter cooking time(e.g. 10 min, 1 hour etc.)"
+                                        placeholder="e.g. 10 min, 1 hour etc."
                                     />
                                 </p>
                                 <div className="indicators">
@@ -310,6 +314,7 @@ const Dish = () => {
                             </>
                         ) : (
                         <>
+                        {/*             DISH INFO            */}
                         {dish.is_favorite === 1 ? (
                             <button className="favorite-button" onClick={() => handleUpdateFavorite(dish.name, false)}>
                                 <i className="fa-solid fa-heart"></i>
@@ -321,7 +326,7 @@ const Dish = () => {
                         )}
                         <div className="button-group">
                             <button className="update-button" onClick={() => {
-                                    setEditingProductName(dish.name);
+                                    setEditingDishName(dish.name);
                                 }}>
                                 <i className="fa-solid fa-pen"></i>
                             </button>
@@ -349,6 +354,7 @@ const Dish = () => {
                 ))}
             </div>
 
+            {/*             HIDDEN FORM FOR ADD DISH            */}
             {isFormOpen && (
              <div className="modal">
                 <div className="modal-overlay" onClick={toggleForm}></div>
@@ -358,7 +364,7 @@ const Dish = () => {
                         <form onSubmit={handleSubmit}>
                             <input 
                                 type="text" 
-                                placeholder="Dish name" 
+                                placeholder="Dish name *" 
                                 value={dishName} 
                                 onChange={(e) => setDishName(e.target.value)} 
                                 required 
@@ -374,7 +380,7 @@ const Dish = () => {
                             </select>
                             <input 
                                 type="text" 
-                                placeholder="Cooking time" 
+                                placeholder="Cooking time *" 
                                 value={cookingTime} 
                                 onChange={(e) => setCookingTime(e.target.value)} 
                                 required 
@@ -417,6 +423,7 @@ const Dish = () => {
                                 <button type="button" onClick={handleIngredientSearch}>Search</button>
                             </div>
 
+                            {/*    SHOW FOUND PRODUCTS  */}
                             {foundProducts.map(product => (
                                 <div key={product.id}>
                                     <span>{product.name}</span>
@@ -440,7 +447,7 @@ const Dish = () => {
                                 </div>
                             ))}
 
-                            {/* Show added products*/}
+                            {/*   SHOW ADDED PRODUCT   */}
                             <ul>
                                 {ingredients.map((ingredient, index) => (
                                     <li key={index}>

@@ -300,6 +300,7 @@ app.delete('/delete-planned-dish/:dishId', (req, res) => {
   
 
 //----------------------------------------------------- Vlada------------------------------------------------------------------
+// ---------------------DISH------------------
 app.post('/add-dish', (req, res) => {
     const { name, difficulty_level, cooking_time, is_vegan, is_gluten_free, is_lactose_free, ingredients } = req.body;
 
@@ -387,12 +388,14 @@ app.post('/update-dish', (req, res) => {
         originalName
     } = req.body;
 
-    // Формуємо запит для оновлення лише переданих полів
+    // Form a request to update only the transferred fields
     const updates = [];
     const values = [];
 
-    updates.push('name = ?');
-    values.push(name);
+    if (name) {
+        updates.push('name = ?');
+        values.push(name);
+    }
 
     if (difficulty_level) {
         updates.push('difficulty_level = ?');
@@ -404,17 +407,20 @@ app.post('/update-dish', (req, res) => {
         values.push(cooking_time);
     }
 
-    // Завжди оновлюємо індикатори
+    const isVegan = is_vegan === 'on' ? 1 : 0;
+    const isGlutenFree = is_gluten_free === 'on' ? 1 : 0;
+    const isLactoseFree = is_lactose_free === 'on' ? 1 : 0;
+    // Always update indicators
     updates.push('is_vegan = ?');
-    values.push(is_vegan);
+    values.push(isVegan);
 
     updates.push('is_gluten_free = ?');
-    values.push(is_gluten_free);
+    values.push(isGlutenFree);
 
     updates.push('is_lactose_free = ?');
-    values.push(is_lactose_free);
+    values.push(isLactoseFree);
 
-    // Додаємо ім'я для WHERE
+    // Add old dish name for WHERE
     values.push(originalName);
 
     if (updates.length === 0) {
@@ -430,7 +436,7 @@ app.post('/update-dish', (req, res) => {
         }
 
         if (results.affectedRows === 0) {
-            return res.status(404).send('Dish not found');
+            return res.status(404).send('Dish was not found');
         }
 
         res.status(200).send('Dish updated successfully');
@@ -440,11 +446,7 @@ app.post('/update-dish', (req, res) => {
 app.post('/update-dish-favorite', (req, res) => {
     const { name, is_favorite } = req.body;
 
-    // if (!name || typeof is_favorite === 'undefined') {
-    //     return res.status(400).send('Dish name and is_favorite value are required');
-    // }
-
-    // Перевіряємо, чи існує страва
+    // Check if dish exist
     const getDishQuery = 'SELECT * FROM dishes WHERE name = ?';
     connection.query(getDishQuery, [name], (err, results) => {
         if (err) {
@@ -456,14 +458,14 @@ app.post('/update-dish-favorite', (req, res) => {
             return res.status(404).send('Dish not found');
         }
 
-        // Оновлюємо значення is_favorite
+        // Update value of 'is_favorite'
         const updateQuery = 'UPDATE dishes SET is_favorite = ? WHERE name = ?';
         connection.query(updateQuery, [is_favorite, name], (err) => {
             if (err) {
                 console.error(err);
                 return res.status(500).send('Error updating dish');
             }
-            res.status(200).send('Dish favorite status updated');
+            res.status(200).send('Dish attribute is_favorite updated');
         });
     });
 });
@@ -471,7 +473,7 @@ app.post('/update-dish-favorite', (req, res) => {
 app.get('/filter-dishes', (req, res) => {
     const { filter } = req.query;
 
-    // Запит для отримання страв з фільтром
+    // Get all dish with filter
     const dishQuery = `
         SELECT * FROM dishes WHERE ?? = true
     `;
@@ -485,7 +487,7 @@ app.get('/filter-dishes', (req, res) => {
             return res.status(404).send('No dishes found');
         }
 
-        // Отримання інгредієнтів для кожної страви
+        // Get product connected to this dish
         const dishIds = dishResults.map(dish => dish.id);
         const ingredientQuery = `
             SELECT dp.dish_id, p.name AS product_name, dp.required_amount, p.unit
@@ -499,7 +501,6 @@ app.get('/filter-dishes', (req, res) => {
                 return res.status(500).send('Error retrieving ingredients');
             }
 
-            // Об’єднання страв з їх інгредієнтами
             const dishesWithIngredients = dishResults.map(dish => {
                 return {
                     ...dish,
@@ -511,9 +512,6 @@ app.get('/filter-dishes', (req, res) => {
         });
     });
 });
-
-
-
 
 app.get('/get-all-dishes', (req, res) => {
     const dishQuery = 'SELECT * FROM dishes'; // Get all dish
@@ -577,7 +575,7 @@ app.delete('/delete-dish/:id', (req, res) => {
         });
     });
 });
-
+// ---------------------SHOPPING LIST------------------
 app.post('/add-to-shopping-list', (req, res) => {
     const { name, amount, unit, price, lactose_free, gluten_free, vegan, expiration_date } = req.body;
 
@@ -593,7 +591,7 @@ app.post('/add-to-shopping-list', (req, res) => {
             console.error('Database error:', err);
             return res.status(500).send('Error adding item to shopping list');
         }
-        res.status(201).send('Item added to shopping list');
+        res.status(201).send('Product added to shopping list');
     });
 });
 
@@ -609,7 +607,7 @@ app.get('/get-product-from-list/:name', (req, res) => {
         if (results.length === 0) {
             return res.status(404).send('Product not found');
         }
-        res.status(200).json(results); // Повертаємо перший знайдений продукт
+        res.status(200).json(results); 
     });
 });
 
@@ -634,10 +632,9 @@ app.post('/update-product-amount', (req, res) => {
             return res.status(500).send('Error retrieving product');
         }
 
-        if (results.length > 0) { // ЧИ РОБИТИ ПЕРЕВІРКУ НАЯВНОСТІ ПРОДУКТА ТУТ ЧИ НІ
-            // Оновлюємо кількість існуючого продукту
+        if (results.length > 0) { 
             const existingProduct = results[0];
-            const newAmount = existingProduct.amount + amount;  // додаємо до поточної кількості
+            const newAmount = existingProduct.amount + amount;  
 
             const updateQuery = 'UPDATE products SET amount = ? WHERE name = ?';
             connection.query(updateQuery, [newAmount, name], (err) => {
