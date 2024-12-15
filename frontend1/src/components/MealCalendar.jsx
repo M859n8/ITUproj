@@ -1,16 +1,16 @@
+/*  Author : Maryna Kucher 
+    Login : xkuche01      */
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Calendar from 'react-calendar';
 import './MealCalendar.css';
 import SingleMeal from './SingleMeal';
 
-
+// template foe calendar and meals 
 const MealCalendar = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  
-   
-  
   return (
+    
     <div className="calendar-data">
     <div className="dates-part">
       <Calendar
@@ -18,8 +18,8 @@ const MealCalendar = () => {
         value={selectedDate}
         className="custom-calendar"
       />
-      {/* <p>Selected Date: {selectedDate.toDateString()}</p> */}
     </div>
+
 
     <div className="meals-part">
       <div className="meal">

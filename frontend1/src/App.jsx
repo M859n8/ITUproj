@@ -1,3 +1,5 @@
+/*  Author : Maryna Kucher, xkuche01 
+    Author : Bilyk Vladyslava, xbilyk03 */
 import './App.css'
 import React, { useState, useEffect, useRef  } from 'react';
 import axios from 'axios';
@@ -77,18 +79,17 @@ function App() {
         </button>
       </nav>
 
-      {/* Section of page */}
+      {/* provider covers all sections to allow asynchronous updating of the product list */}
+      <ProductProvider>
       <section ref={calendarRef} id="calendar"> 
         <h2>Calendar</h2>
-
         <MealCalendar />
+
       </section>
       <section ref={productsRef} id="products"> 
 
-        <ProductProvider>
           <AddProduct />
           <ProductList />
-        </ProductProvider>
 
       </section>
       <section ref={shoppingListRef} id="shoppingList"> 
@@ -97,6 +98,7 @@ function App() {
       <section ref={dishesRef} id="dishes"> 
         <Dish/>
       </section>
+      </ProductProvider>
     </div>
   )
 }

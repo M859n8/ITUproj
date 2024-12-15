@@ -1,3 +1,5 @@
+// Author : Maryna Kucher 
+// Login : xkuche01
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 //context will pass the data between components
