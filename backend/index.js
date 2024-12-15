@@ -134,6 +134,8 @@ app.put('/update-product/:productId', (req, res) => {
     });
   });
 
+
+  
   //-------------------------calendar-----------------------------//
 
 
@@ -153,9 +155,25 @@ app.post('/plan-meal', (req, res) => {
     `;
 
     const findProductsForDishQuery = ` 
-        SELECT dp.product_id, p.amount, p.reserved_amount, dp.required_amount 
-        FROM dish_product dp JOIN products p ON dp.product_id = p.id 
-        WHERE dp.dish_id = ?; 
+        SELECT 
+            dp.product_id, 
+            p.name,
+            p.amount, 
+            p.reserved_amount, 
+            dp.required_amount,
+            p.unit,
+            p.price,
+            p.lactose_free,
+            p.gluten_free,
+            p.vegan,
+            p.expiration_date
+        FROM 
+            dish_product dp 
+        JOIN 
+            products p ON dp.product_id = p.id
+        WHERE 
+            dp.dish_id = ?;
+
     `; 
     const updateProductReservedAmountQuery = ` 
         UPDATE products SET reserved_amount = reserved_amount + ? WHERE id = ? 
@@ -192,8 +210,12 @@ app.post('/plan-meal', (req, res) => {
                 return res.status(500).json({ error: 'Failed to find products for dish' }); 
             } 
             const insufficientProducts = products.filter(product => product.amount-product.reserved_amount < product.required_amount); 
-            if (insufficientProducts.length > 0) { 
-                return res.status(400).json({ error: 'Not enough products available', insufficientProducts }); 
+            if (insufficientProducts.length > 0) {
+                return res.status(200).json({
+                  message: 'Insufficient products to prepare this dish',
+                  insufficientProducts,
+                  suggestion: 'Please add the missing products to the inventory.',
+                });
             } else { 
                 products.forEach(product => { 
                     connection.query(updateProductReservedAmountQuery, [product.required_amount, product.product_id], (err, results) => { 
@@ -207,14 +229,160 @@ app.post('/plan-meal', (req, res) => {
                 connection.query(insertCalendarDishQuery, [calendar_id, dish_id, meal_type], (err, results) => { 
                     if (err) { console.error('Error planning meal:', err); 
                         return res.status(500).json({ error: 'Failed to plan meal' }); 
-                    } 
+                    }else{
                     res.status(201).json({ message: 'Meal planned successfully' }); 
+
+
+                    } 
                 }); 
             } 
         }); 
     } 
 });
 
+app.post('/add-multiple-to-shopping-list', async (req, res) => {
+    const { insufficientProducts, dish_id, date, meal_type } = req.body; // Додаємо страву та дату до req.body
+
+
+    if (!insufficientProducts || !insufficientProducts.length) {
+        console.error('No products received for adding to shopping list');
+        return res.status(400).send('No products provided');
+    }
+  
+    // Функція для обробки одного продукту
+    const processProduct = (product) => {
+      return new Promise((resolve, reject) => {
+        const { name, amount = 0, reserved_amount = 0, required_amount = 0, unit = null, price = null, lactose_free, gluten_free, vegan, expiration_date = null } = product;
+  
+        const getProductQuery = 'SELECT * FROM shopping_list WHERE name = ?';
+        connection.query(getProductQuery, [name], (err, results) => {
+          if (err) return reject(`Error retrieving product: ${err}`);
+  
+          if (results.length > 0) {
+            // Продукт існує – оновлюємо кількість
+            const existingProduct = results[0];
+            const newAmount = existingProduct.amount + required_amount;
+  
+            const updateQuery = 'UPDATE shopping_list SET amount = ? WHERE name = ?';
+            connection.query(updateQuery, [newAmount, name], (err) => {
+              if (err) return reject(`Error updating product quantity: ${err}`);
+              resolve(`Product ${name} updated successfully`);
+            });
+          } else {
+            // Продукт не існує – додаємо новий запис
+            const insertQuery = `
+              INSERT INTO shopping_list (name, amount, unit, price, lactose_free, gluten_free, vegan, expiration_date) 
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `;
+            connection.query(insertQuery, [name, amount, unit, price, lactose_free, gluten_free, vegan, expiration_date], (err) => {
+              if (err) return reject(`Error adding product to shopping list: ${err}`);
+              resolve(`Product ${name} added to shopping list`);
+            });
+          }
+        });
+      });
+    };
+  
+    try {
+        // Виконуємо всі операції паралельно
+        const results = await Promise.all(insufficientProducts.map(processProduct));
+        const findCalendarQuery = `
+        SELECT id FROM calendar WHERE date = ?
+        `;
+        const insertCalendarQuery = `
+            INSERT INTO calendar (date) VALUES (?)
+        `;
+        const insertCalendarDishQuery = `
+            INSERT INTO calendar_dishes (calendar_id, dish_id, meal_type)
+            VALUES (?, ?, ?)
+        `;
+
+        const findProductsForDishQuery = ` 
+            SELECT 
+                dp.product_id, 
+                p.name,
+                p.amount, 
+                p.reserved_amount, 
+                dp.required_amount,
+                p.unit,
+                p.price,
+                p.lactose_free,
+                p.gluten_free,
+                p.vegan,
+                p.expiration_date
+            FROM 
+                dish_product dp 
+            JOIN 
+                products p ON dp.product_id = p.id
+            WHERE 
+                dp.dish_id = ?;
+
+        `; 
+        const updateProductReservedAmountQuery = ` 
+            UPDATE products SET reserved_amount = reserved_amount + ? WHERE id = ? 
+        `;
+
+        connection.query(findCalendarQuery, [date], (err, results) => {
+            if (err) {
+              console.error('Error finding calendar date:', err);
+              return res.status(500).json({ error: 'Failed to find calendar date' });
+            }
+      
+            if (results.length > 0) {
+              // Дата існує – отримуємо її `id`
+              const existingCalendarId = results[0].id;
+              addDishToCalendar(existingCalendarId);
+            } else {
+              // Додаємо нову дату в таблицю `calendar`
+              connection.query(insertCalendarQuery, [date], (err, results) => {
+                if (err) {
+                  console.error('Error inserting calendar date:', err);
+                  return res.status(500).json({ error: 'Failed to insert calendar date' });
+                }
+                const newCalendarId = results.insertId;
+                addDishToCalendar(newCalendarId);
+              });
+            }
+          });
+           // Функція для додавання страви до календаря
+    function addDishToCalendar(calendar_id) {
+        connection.query(findProductsForDishQuery, [dish_id], (err, products) => {
+          if (err) {
+            console.error('Error finding products for dish:', err);
+            return res.status(500).json({ error: 'Failed to find products for dish' });
+          }
+            const sufficientProducts = products.filter(product => product.amount - product.reserved_amount >= product.required_amount);
+
+            if (sufficientProducts.length > 0) {
+                sufficientProducts.forEach(product => {
+                    connection.query(updateProductReservedAmountQuery, [product.required_amount, product.product_id], (err) => {
+                    if (err) {
+                        console.error('Error updating product reserved amount:', err);
+                        return res.status(500).json({ error: 'Failed to update product reserved amount' });
+                    }
+                    });
+                });
+            }
+  
+            connection.query(insertCalendarDishQuery, [calendar_id, dish_id, meal_type], (err) => {
+              if (err) {
+                console.error('Error planning meal:', err);
+                return res.status(500).json({ error: 'Failed to plan meal' });
+              } else {
+                res.status(201).json({ message: 'Meal planned successfully', details: results });
+              }
+            });
+          
+        });
+    }
+
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'An error occurred while processing products', details: error });
+    }
+  });
+  
+ 
 
 app.get('/meals-for-day', (req, res) => {
     const { date, meal_type } = req.query;
@@ -584,7 +752,7 @@ app.post('/add-to-shopping-list', (req, res) => {
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
-    const values = [name, amount, unit, price, lactose_free, gluten_free, vegan, expiration_date || null];
+    const values = [name, amount || 0, unit || null, price || null, lactose_free, gluten_free, vegan, expiration_date || null];
 
     connection.query(query, values, (err, results) => {
         if (err) {

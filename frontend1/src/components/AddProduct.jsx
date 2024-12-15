@@ -1,3 +1,5 @@
+// Author : Maryna Kucher 
+// Login : xkuche01
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useProducts } from './ProductContext.jsx';

@@ -1,22 +1,24 @@
+/*  Author : Maryna Kucher 
+    Login : xkuche01      */
 import React, {useState} from 'react';
 import { useProducts } from './ProductContext.jsx';
 import ProductEdit from './ProductEdit';
 import { format } from 'date-fns';
-
 import './ProductList.css';
 import axios from "axios";
 
+// product section
 const ProductList = () => {
-  //get products data
+  //get products data using context
   const { products } = useProducts();
-
+  //updating list using context
   const { fetchProducts } = useProducts();
   //save search name
   const [productName, setProductName] = useState('');
   //save search results from backend, if there was no search -> null
   const [searchResults, setSearchResults] = useState([]);
   const [noResults, setNoResults] = useState(false);
-
+  //editing product state
   const [editingProductId, setEditingProductId] = useState(null);
 
 
@@ -25,6 +27,7 @@ const ProductList = () => {
 
     setProductName(event.target.value);
   };
+
   //when user press "Enter"
   const handleSearch = async (event) => {
 
@@ -32,14 +35,16 @@ const ProductList = () => {
       //if product name empty, show all products
       if (productName.trim() === '') {
         setSearchResults(null);
+        setNoResults(false);
         return;
       }
       try {
+        //request to backend
         const response = await axios.get('http://localhost:5000/get-product', {
           params: { name: productName }
         });
        
-
+        //if there are no results
         if (response.data.length === 0) {
           setSearchResults([]);
           setNoResults(true);
@@ -48,7 +53,6 @@ const ProductList = () => {
           setNoResults(false);
         }
       } catch (error) {
-
         setSearchResults([]);
         setNoResults(true);
 
@@ -56,26 +60,26 @@ const ProductList = () => {
     }
   };
 
+  //remove product from product list
   const handleDeleteProduct = async (productId) => {
     try {
-      // Передача параметра через URL (тіло не потрібне)
+      //sending argument through url
       await axios.delete(`http://localhost:5000/delete-product/${productId}`);
       
-      // Оновлення списку після видалення (якщо потрібно)
+      // update product list
       await fetchProducts();
-      // setProductName('');
     } catch (error) {
       console.error('Error deleting product:', error);
     }
   };
 
- 
+  //handle edit and cancel buttons
   const handleEditClick = (productId) => {
     setEditingProductId(productId);
   };
   const handleCancelEdit = () => {
-    setEditingProductId(null); // Скидаємо редагування
-    fetchProducts();
+    setEditingProductId(null); //reset editing state
+    fetchProducts(); //update product list
   };
 
   return (
@@ -85,7 +89,7 @@ const ProductList = () => {
           type="text"
           value={productName}
           onChange={handleInputChange}
-          onKeyDown={handleSearch} // Call handleSearch on key press
+          onKeyDown={handleSearch} // Call handleSearch on key down
           placeholder="Enter product name"
         />
       </div>
@@ -93,16 +97,18 @@ const ProductList = () => {
       {/*if search results not empty show them, otherwise show all products*/}
       <div className="product-list">
         {noResults ? (
-          // Пошуковий запит є, але результати порожні
+          //there is search request, but no results
           <p>Not found</p>
         ) : (
-          // Якщо є результати пошуку, показати їх, інакше показати всі продукти
+          //show search results if any
           (searchResults && searchResults.length > 0 ? searchResults : products).map((product) => (
+            // chande className (for css) if product in edititng state
             <div className={`product-item ${editingProductId === product.id ? 'editing' : ''}`}>
             {editingProductId === product.id ? (
-              // Якщо цей продукт редагується, показуємо форму редагування
+              // show edit form if product in editing state
               <ProductEdit product={product} handleCancelEdit={handleCancelEdit} />
             ) : (
+              //otherwise show product information
               <>
               <h3 className="product-name">{product.name}</h3>
               <div className="product-details">
@@ -115,6 +121,7 @@ const ProductList = () => {
                   <p>Expiration Date: {format(new Date(product.expiration_date), 'yyyy-MM-dd')}</p>
                 )}
               </div>
+              {/* delete and edit buttons  */}
               <div className="product-actions">
                 <i className="fas fa-trash delete-icon" onClick={() => handleDeleteProduct(product.id)}></i>
                 <i className="fas fa-edit edit-icon" onClick={() => handleEditClick(product.id)}></i>

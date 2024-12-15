@@ -1,5 +1,9 @@
+/*  Author : Maryna Kucher 
+    Login : xkuche01      */
 
-#products h2 {
+/*------------ styles for product section  --------*/
+
+  #products h2 {
     text-align: center;
     margin: 0 10px 0 0;
   }
@@ -7,7 +11,7 @@
     position: relative;
   }
 
-  /*           button transition           */
+  /*           add product button           */
   .addButton {
     width: 40px;
     height: 40px;
@@ -20,7 +24,7 @@
     position: relative;
   }
   
-  /* Додаємо плюсик */
+  /*      +      */
   .addButton::before,
   .addButton::after {
     content: '';
@@ -29,7 +33,7 @@
     transition: transform 0.3s;
   }
   
-  /* Горизонтальна лінія */
+  /* horisontal line */
   .addButton::before {
     width: 20px;
     height: 3px;
@@ -38,7 +42,7 @@
     transform: translate(-50%, -50%);
   }
   
-  /* Вертикальна лінія */
+  /* vertical line */
   .addButton::after {
     width: 3px;
     height: 20px;
@@ -47,13 +51,13 @@
     transform: translate(-50%, -50%);
   }
   
-  /* Змінюємо на хрестик, коли кнопка активна */
+  /* change ' + '  to  ' x ' */
   .addButton.active::after {
     transform: translate(-50%, -50%) rotate(90deg);
   }
   
   
-
+  /* add product form */
   .show-form {
     position: absolute;
     top: 60px;
@@ -69,17 +73,12 @@
     height: fit-content;
     display: flex;
     flex-direction: column;
-    gap: 20px; /*between elements*/
-    
+    gap: 20px; /*between input elements*/
     border-radius: 20px;
-    /* Плавний перехід/ modify */
-    /* opacity: 1;
-    visibility: visible;
-    transition: opacity 0.3s ease, visibility 0.3s ease; */
   }
 
-  /*                search section               */
 
+  /*                search section               */
   .search-box{
     margin: 3vh auto;
     width: 80%;
@@ -93,6 +92,8 @@
   }
 
   /*              product list section            */
+
+  /* single product */
   .product-list {
     background-color: white;
     display: flex;
@@ -116,11 +117,11 @@
     margin-bottom: 20px;
   }
   .product-item.editing {
-    /* background-color: #f0f8ff; */
     border: 2px dashed #2683b5;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
-  
+
+  /* single product content */
   .product-name {
     flex: 1;
     font-size: 1.2em;
@@ -152,19 +153,21 @@
   .product-details label{
     font-size: 16px;
   }
+  .product-details p {
+    margin: 0;
+  }
 
-  /* Поля вводу повинні виглядати як текст */
+  /* inputs of 'edit product' form */
   .edit-input {
     width: 100%;
     font-size: 16px;
-    /* padding: 5px; */
     border: 1px solid #ccc;
     border-radius: 5px;
     box-sizing: border-box;
     background-color: #fff;
   }
 
-  /* Стилі для чекбоксів */
+  /* checckbox of 'edit product' form */
   .checkbox-label {
     display: flex;
     align-items: center;
@@ -172,13 +175,11 @@
     font-size: 16px;
   }
   
-  /* Додайте стиль для іконок */
+  /* styles for buttons */
   .product-actions {
     position: absolute;
-    /* top: 10px;
-    right: 10px; */
     bottom: 20px;
-    right: 20px;
+    left: 20px;
     display: flex;
     gap: 15px;
   }
@@ -190,58 +191,35 @@
     display: flex;
     gap: 15px;
   }
-  /* .product-actions button {
-  padding: 8px 15px;
-  font-size: 1em;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
 
-.product-actions button:hover {
-  background-color: #2980b9;
-} */
-.product-actions i {
-  cursor: pointer;
-  font-size: 1.5em;
-  color: #c6dbe6;
-  transition: color 0.2s;
-}
-
-.product-actions i:hover {
-  color: #2683b5;
-}
-.product-actions-edit button {
-  cursor: pointer;
-  /* color: #2683b5; */
-  background-color: #c6dbe6;
-  border: none;
-  border-radius: 5px;
-  padding: 5px;
-  font-size: 14px;
-  transition: color 0.2s;
-}
-
-.product-actions-edit button:hover {
-  background-color: #2683b5;
-  color: white;
-} 
-  
-  /* Окремі кольори для видалення та редагування */
-  /* .delete-icon:hover {
-    color: #e74c3c;
+  .product-actions i {
+    cursor: pointer;
+    font-size: 1.5em;
+    color: #c6dbe6;
+    transition: color 0.2s;
   }
-  
-  .edit-icon:hover {
-    color: #3498db;
-  } */
-  
-  .product-details p {
-    margin: 0;
+
+  .product-actions i:hover {
+    color: #2683b5;
   }
+  .product-actions-edit button {
+    cursor: pointer;
+    background-color: #c6dbe6;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 14px;
+    transition: color 0.2s;
+  }
+
+  .product-actions-edit button:hover {
+    background-color: #2683b5;
+    color: white;
+  } 
+  
+ 
+  
+  
 
 
   

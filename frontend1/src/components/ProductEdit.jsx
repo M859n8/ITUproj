@@ -1,9 +1,13 @@
+/*  Author : Maryna Kucher 
+    Login : xkuche01      */
 import React, { useState } from 'react';
 import { format } from 'date-fns';
 import './ProductList.css';
 import axios from "axios";
 
+//product edit section
 const ProductEdit = ({ product, handleCancelEdit }) => {
+
   const [updatedProduct, setUpdatedProduct] = useState({ ...product });
 
   const handleChange = (e) => {
@@ -14,6 +18,7 @@ const ProductEdit = ({ product, handleCancelEdit }) => {
     }));
   };
 
+  //sending the form
   const handleSave = async () => {
     //check mandatory data
     const { name, amount} = updatedProduct;
@@ -25,17 +30,18 @@ const ProductEdit = ({ product, handleCancelEdit }) => {
       updatedProduct.amount = 0;
     }
     try {
-      // Відправка запиту на оновлення продукту
+      //request to backend
       const response = await axios.put(`http://localhost:5000/update-product/${updatedProduct.id}`, {
         ...updatedProduct,
-        expiration_date: updatedProduct.expiration_date ? format(updatedProduct.expiration_date, 'yyyy-MM-dd') : null, // Якщо дата є, форматуємо її, якщо ні - передаємо null
+        //set correct data format (if data is set)
+        expiration_date: updatedProduct.expiration_date ? format(updatedProduct.expiration_date, 'yyyy-MM-dd') : null, 
 
       });
 
       if (response.status === 200) {
-        // Якщо успішно оновлено, закриваємо форму редагування
+        //close editing form if status is ok
         console.log('Updated Product:', updatedProduct);
-        handleCancelEdit(); // Викликаємо функцію для скидання стану редагування
+        handleCancelEdit(); //call function to reset editing state
     
       }
     } catch (error) {
@@ -43,10 +49,9 @@ const ProductEdit = ({ product, handleCancelEdit }) => {
     }
   };
 
+  //cancel button handler
   const handleCancel = () => {
-    handleCancelEdit(); // Закриваємо форму редагування
-    //setEditingProductId(null); // Скидаємо редагування
-    //fetchProducts();
+    handleCancelEdit(); //call function to reset editing state
   };
 
   return (
@@ -92,6 +97,7 @@ const ProductEdit = ({ product, handleCancelEdit }) => {
           type="checkbox"
           name="lactose_free"
           checked={updatedProduct.lactose_free}
+          // show previous checkbox state if available
           onChange={() => setUpdatedProduct((prevState) => ({
             ...prevState,
             lactose_free: !prevState.lactose_free
@@ -128,14 +134,14 @@ const ProductEdit = ({ product, handleCancelEdit }) => {
         <input
           type="date"
           name="expiration_date"
+          // show previous date if available
           value={updatedProduct.expiration_date ? format(new Date(updatedProduct.expiration_date), 'yyyy-MM-dd') : ''}
-    
           onChange={handleChange}
           className="edit-input"
         />
       </label>
-      
       </div>
+      {/* edit and sve buttons */}
       <div className="product-actions-edit">
         <button onClick={handleSave}>Save</button>
         <button onClick={handleCancel}>Cancel</button>
