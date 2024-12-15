@@ -1,3 +1,4 @@
+/* Autor: Bilyk Vladyslava */
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Dish.css'; 
@@ -39,6 +40,12 @@ const Dish = () => {
     });
     // FILTER
     const [selectedFilter, setSelectedFilter] = useState('');
+    // Check what dish user want to add to meal plan
+    const [dishCalendar, setDishCalendar] = useState('null'); 
+    const [formDataCalendar, setFormDataCalendar] = useState({
+      date: '',
+      mealType: 'breakfast', 
+    });
 
     // Function that fill variable 'editDish' with new value for updating
     const handleEditValue = (field, value) => {
@@ -199,6 +206,32 @@ const Dish = () => {
         }
     };
 
+    // Function that handle adding dish to calendar
+    const handleAddMealPlan = async (dishId) => {
+        const { date, mealType } = formDataCalendar;
+    
+        try {
+          await axios.post('http://localhost:5000/plan-meal', {
+            date,
+            dish_id: dishId, 
+            meal_type: mealType,
+          });
+          // Clear variable for the next adding
+          setDishCalendar('null'); 
+        } catch (error) {
+          console.error('Error add to plan meal:', error);
+        }
+      };
+    
+    // Function that handle filling ''
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormDataCalendar((prev) => ({
+        ...prev,
+        [name]: value,
+        }));
+    };
+
     return (
         <div className="dish-container">
             <h2>Dishes</h2>
@@ -350,6 +383,40 @@ const Dish = () => {
                         </ul>
                         </>
                       )}
+                      {dishCalendar === dish.name ? (
+                        <div className="add-form">
+                        <label>
+                            Date:
+                            <input
+                            type="date"
+                            name="date"
+                            value={formDataCalendar.date}
+                            onChange={handleInputChange}
+                            required
+                            />
+                        </label>
+                        <label>
+                            Meal Type:
+                            <select
+                            name="mealType"
+                            value={formDataCalendar.mealType}
+                            onChange={handleInputChange}
+                            >
+                            <option value="breakfast">Breakfast</option>
+                            <option value="lunch">Lunch</option>
+                            <option value="dinner">Dinner</option>
+                            </select>
+                        </label>
+                        <button onClick={() => handleAddMealPlan(dish.id)}>Add to Calendar</button>
+                        </div>
+                    ) : (
+                        <button
+                        className="add-calendar-button"
+                        onClick={() => setDishCalendar(dish.name)} // Встановлюємо активну страву
+                        >
+                        +Add to Plan Meal
+                        </button>
+                    )}
                     </div>
                 ))}
             </div>
