@@ -10,6 +10,8 @@ const SingleMeal = ({selectedDate, meal_type}) => {
   const [error, setError] = useState(''); // Стан для помилки
   const [searchResults, setSearchResults] = useState(null);
   const [plannedDishes, setPlannedDishes] = useState([]);
+  const [insufficientProducts, setInsufficientProducts] = useState([]);
+
 
   const [noResultsMessage, setNoResultsMessage] = useState('');
 
@@ -46,6 +48,7 @@ const SingleMeal = ({selectedDate, meal_type}) => {
       if (searchQuery.trim() === '') {
         setSearchResults(null);
         setNoResultsMessage('');
+        setError('');
         return;
       }
       try {
@@ -53,9 +56,11 @@ const SingleMeal = ({selectedDate, meal_type}) => {
           params: { name: searchQuery }
         });
         if (response.data.length === 0) {
+          setError('');
           setNoResultsMessage('No dishes found');
           setSearchResults([]);
         } else {
+          setError('');
           setNoResultsMessage('');
           setSearchResults(response.data); //save search results
         }
@@ -70,6 +75,9 @@ const SingleMeal = ({selectedDate, meal_type}) => {
 
   const handleAddDish = async (dishId) => {
     try {
+      
+      // console.log('handleAddDish called with dish:', dish);  // Це дозволить перевірити, чи викликається функція
+
 
       const response = await axios.post('http://localhost:5000/plan-meal', {
         //calendar_id: selectedDate,
@@ -79,14 +87,32 @@ const SingleMeal = ({selectedDate, meal_type}) => {
         meal_type,
       });
 
-      //console.log('Response from server:', response); // Логування відповіді сервера
+      // console.log('Response from server:', response); // Логування відповіді сервера
 
       if (response.status === 201) {
 
-        setSelectedDish(searchResults.find((dish) => dish.id === dishId));
+        setSelectedDish(dishId);
         setSearchQuery('');
         setSearchResults([]);
         fetchPlannedDishes();
+        missingProducts('');
+        setInsufficientProducts([]);
+        setError('');
+      }else if (response.status === 200 && response.data.insufficientProducts) {
+        setSelectedDish(dishId);
+        setInsufficientProducts(response.data.insufficientProducts);
+        // Якщо продуктів недостатньо, відобразити пропозицію додати їх
+        const missingProducts = response.data.insufficientProducts
+          .map((product) => `${product.name} (required: ${product.required_amount}, available: ${product.amount - product.reserved_amount})`)
+          .join('\n');
+  
+        setError(`Insufficient products to prepare this dish:\n${missingProducts}\n\n${response.data.suggestion}`);
+        
+      } else if (response.status === 200 && response.data.message) {
+        // Якщо сервер повернув повідомлення про успіх
+        console.log(response.data.message); // Виводимо в консоль
+        setError(response.data.message);  // Можна відобразити повідомлення в інтерфейсі
+        alert('OK');
       }
     } catch (error) {
 
@@ -94,6 +120,49 @@ const SingleMeal = ({selectedDate, meal_type}) => {
       setError('Failed to plan meal');
     }
   };
+
+  const handleAddToShoppingList = async () => {
+    try {
+      // setSelectedDish(dish);
+      // setSearchQuery('');
+      // setSearchResults([]);
+      const response = await axios.post('http://localhost:5000/add-multiple-to-shopping-list', {
+        insufficientProducts: insufficientProducts,
+        dish_id: selectedDish,
+        date: format(selectedDate, 'yyyy-MM-dd'), // Конвертуємо дату перед відправкою
+  
+        meal_type,
+      });
+  
+      if (response.status === 201) {
+      
+      // 4. Очищення станів після успішного додавання
+      // setSelectedDish(null);
+      setSearchQuery('');
+      setSearchResults([]);
+      setInsufficientProducts([]);
+
+      alert('Dish successfully planned and products added to the shopping list');
+
+      }
+    } catch (error) {
+      // console.error('Error adding products to shopping list:', error);
+      // setError('Error adding products to shopping list.');
+      // alert('Failed to add products to the shopping list');
+      if (error.response) {
+        // Помилка з відповіді сервера
+        setError('Server error: ' + error.response.data);
+      } else if (error.request) {
+        // Помилка в запиті
+        setError('No response from server');
+      } else {
+        // Інші помилки
+        setError('An error occurred: ' + error.message);
+      }
+
+    }
+  };
+  
 
   // Видалення страви
   const handleDeleteDish = async (dishId) => {
@@ -109,6 +178,13 @@ const SingleMeal = ({selectedDate, meal_type}) => {
     }
   };
 
+  const handleCancel = () => {
+    // setSelectedDish(null);
+    setSearchQuery('');
+    setSearchResults([]);
+    setInsufficientProducts([]);
+    setError('');
+  };
   
 
   return (
@@ -143,24 +219,38 @@ const SingleMeal = ({selectedDate, meal_type}) => {
           />
           {noResultsMessage && <p>{noResultsMessage}</p>}
           {searchResults && searchResults.length > 0 && (
+          <>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
+
             <ul>
               {searchResults.map((dish) => (
-                <div className="planned-dish">
-                <li key={dish.id}>
-                  {dish.name}
+                <div className="planned-dish" key={dish.id}>
+                  <li>
+                    {dish.name}
                   </li>
-                  {/* <button onClick={() => handleAddDish(dish.id)}>Add</button> */}
-                  <i className="fas fa-plus add-icon" onClick={() => handleAddDish(dish.id)}></i>
-
-                
+                  <i 
+                    className="fas fa-plus add-icon" 
+                    onClick={() => handleAddDish(dish.id)} // передаємо весь dish, а не тільки id
+                  ></i>
                 </div>
               ))}
             </ul>
+            </>
           )}
         </div>
       )}
 
-      {error && <p className="error">{error}</p>}
+<div>
+    {error && <div className="error-message">{error}</div>}
+    {/* Ваш інший код */}
+  </div>
+    {insufficientProducts.length > 0 && (
+      <>
+      <button onClick={handleAddToShoppingList}>Add Missing Products to Shopping List</button>
+      <button onClick={handleCancel}>Cancel</button>
+      </>
+    )}
+
     </div>
   );
 };

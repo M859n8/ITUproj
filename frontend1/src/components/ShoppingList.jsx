@@ -84,8 +84,8 @@ const ShoppingList = () => {
                 const productData = {
                     name: selectedProduct,
                     amount: parseInt(selectedAmount) || 0, // delete ||0 and test
-                    unit: productToAdd.unit,
-                    price: productToAdd.price,
+                    unit: productToAdd.unit || null,
+                    price: productToAdd.price || null,
                     lactose_free: productToAdd.lactose_free,
                     gluten_free: productToAdd.gluten_free,
                     vegan: productToAdd.vegan,
