@@ -2,7 +2,7 @@
     Login : xkuche01      */
 import React, {useState} from 'react';
 import { useProducts } from './ProductContext.jsx';
-import ProductEdit from './ProductEdit';
+import ProductEdit from './ProductEdit.jsx';
 import { format } from 'date-fns';
 import './ProductList.css';
 import axios from "axios";
@@ -103,7 +103,7 @@ const ProductList = () => {
           //show search results if any
           (searchResults && searchResults.length > 0 ? searchResults : products).map((product) => (
             // chande className (for css) if product in edititng state
-            <div className={`product-item ${editingProductId === product.id ? 'editing' : ''}`}>
+            <div key={product.id} className={`product-item ${editingProductId === product.id ? 'editing' : ''}`}>
             {editingProductId === product.id ? (
               // show edit form if product in editing state
               <ProductEdit product={product} handleCancelEdit={handleCancelEdit} />

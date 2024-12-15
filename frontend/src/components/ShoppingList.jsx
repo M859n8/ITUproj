@@ -3,8 +3,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './ShoppingList.css';
 
+
 // Representation of Shopping list section
 const ShoppingList = () => {
+
     // Product name that user updating
     const [editingProductName, setEditingProductName] = useState(null); 
     // Product new amount

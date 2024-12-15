@@ -242,7 +242,7 @@ app.post('/plan-meal', (req, res) => {
 });
 
 app.post('/add-multiple-to-shopping-list', async (req, res) => {
-    const { insufficientProducts, dish_id, date, meal_type } = req.body; // Додаємо страву та дату до req.body
+    const { insufficientProducts, dish_id, date, meal_type } = req.body; 
 
 
     if (!insufficientProducts || !insufficientProducts.length) {
@@ -250,7 +250,7 @@ app.post('/add-multiple-to-shopping-list', async (req, res) => {
         return res.status(400).send('No products provided');
     }
   
-    // Функція для обробки одного продукту
+    //each product processing
     const processProduct = (product) => {
       return new Promise((resolve, reject) => {
         const { name, amount = 0, reserved_amount = 0, required_amount = 0, unit = null, price = null, lactose_free, gluten_free, vegan, expiration_date = null } = product;
@@ -260,7 +260,7 @@ app.post('/add-multiple-to-shopping-list', async (req, res) => {
           if (err) return reject(`Error retrieving product: ${err}`);
   
           if (results.length > 0) {
-            // Продукт існує – оновлюємо кількість
+            //product exists, upd amount
             const existingProduct = results[0];
             const newAmount = existingProduct.amount + required_amount;
   
@@ -270,7 +270,7 @@ app.post('/add-multiple-to-shopping-list', async (req, res) => {
               resolve(`Product ${name} updated successfully`);
             });
           } else {
-            // Продукт не існує – додаємо новий запис
+            //create product if does not exist
             const insertQuery = `
               INSERT INTO shopping_list (name, amount, unit, price, lactose_free, gluten_free, vegan, expiration_date) 
               VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -285,7 +285,7 @@ app.post('/add-multiple-to-shopping-list', async (req, res) => {
     };
   
     try {
-        // Виконуємо всі операції паралельно
+        //execute ewerything in parallel
         const results = await Promise.all(insufficientProducts.map(processProduct));
         const findCalendarQuery = `
         SELECT id FROM calendar WHERE date = ?
@@ -330,11 +330,11 @@ app.post('/add-multiple-to-shopping-list', async (req, res) => {
             }
       
             if (results.length > 0) {
-              // Дата існує – отримуємо її `id`
+              // date exists
               const existingCalendarId = results[0].id;
               addDishToCalendar(existingCalendarId);
             } else {
-              // Додаємо нову дату в таблицю `calendar`
+              //create new date
               connection.query(insertCalendarQuery, [date], (err, results) => {
                 if (err) {
                   console.error('Error inserting calendar date:', err);
@@ -345,7 +345,7 @@ app.post('/add-multiple-to-shopping-list', async (req, res) => {
               });
             }
           });
-           // Функція для додавання страви до календаря
+           //add dish to calendar
     function addDishToCalendar(calendar_id) {
         connection.query(findProductsForDishQuery, [dish_id], (err, products) => {
           if (err) {

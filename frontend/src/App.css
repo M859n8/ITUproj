@@ -1,9 +1,11 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Grechen+Fuemen&display=swap');
 
 .navbar {
   position: fixed;
   top: 0;
   width: 100%;
+  height: 60px;
   background-color: #2683b5;
   display: flex;
   align-items: center;
@@ -32,7 +34,7 @@
 .logo {
   border-radius: 50%; 
   object-fit: cover; 
-  height: 80px;
+  height: 40px;
   margin-right: 10px;
   margin-left: 30px;
 }
@@ -52,32 +54,30 @@ section {
 
 
 }
-section#calendar {
-  margin-top: min(25vh, 120px);
-}
 
-#dishes { 
+
+#dishes,
+#shoppingList{ 
   padding: 40px; 
   height: 80vh;
   background-color: #ffffffc8; 
   overflow-y: auto;
 }
-#dishes h2{
+#dishes h2,
+#shoppingList h2{
   margin-top: 0px;
 }
 
-.delete-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  color: red;
-  font-size: 18px;
-  cursor: pointer;
+/* M A R Y N A*/
+
+section#calendar {
+  margin-top: min(25vh, 120px);
+}
+#calendar h2 {
+  text-align: center;
+  margin: 10px 10px 10px 0;
 }
 
-/* M A R Y N A*/
 #products{
   padding: 10vh;
   background-color: white;
@@ -95,80 +95,4 @@ section#products {
   display: flex; /* Enables flexbox */
   align-items: center; /* vertically centers */
   justify-content: center;
-}
-#products h2 {
-  text-align: center;
-  margin: 0 10px 0 0;
-}
-.parent {
-  position: relative;
-}
-.addButton {
-  background-color: white;
-  font-size: 20px;
-  border-color: white;
-  cursor: pointer; /* Курсор у вигляді руки для кнопки */
-}
-.show-form {
-  position: absolute;
-  top: 60px;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%); /* Center it horizontally */
-  background-color: #c6dbe6;
-  border: 1px solid #ccc;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  z-index: 1000; /* appearance above other content */
-  width: 50vh;
-  height: fit-content;
-  display: flex;
-  flex-direction: column;
-  gap: 20px; /*between elements*/
-  /* Плавний перехід/ modify */
-  opacity: 1;
-  visibility: visible;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-.search-box{
-  margin: 3vh auto;
-  width: 80%;
-  display: flex;
-}
-.search-box input[type="text"]  {
-  width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.product-list {
-  background-color: white;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-}
-
-.product-item {
-  flex: 0 1 calc(50% - 20px);
-  box-sizing: border-box;
-  height: 200px;
-  background-color: #f0f0f0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.product-item h3 {
-  flex: 1; /* name on the left */
-  margin-left: 20px;
-  font-size: 1.2em;
-}
-.product-details {
-  flex: 1; /* details on the right */
-  display: flex;
-  flex-direction: column; /* details in colum */
-  align-items: flex-start;
-}
-.product-details p {
-  margin: 0;
 }
