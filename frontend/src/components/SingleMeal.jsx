@@ -7,7 +7,7 @@ import { useProducts } from './ProductContext.jsx';
 
 
 const SingleMeal = ({selectedDate, meal_type}) => {
-  //serch state 
+  //search state 
   const [searchQuery, setSearchQuery] = useState('');
   //selected dish state
   const [selectedDish, setSelectedDish] = useState(null);

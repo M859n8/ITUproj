@@ -14,7 +14,7 @@ const ProductEdit = ({ product, handleCancelEdit }) => {
     const { name, value } = e.target;
     setUpdatedProduct((prevState) => ({
       ...prevState,
-      [name]: value ? value : null,  // Якщо значення порожнє, встановлюємо null
+      [name]: value ? value : null,  //if value is empty, set null
     }));
   };
 
